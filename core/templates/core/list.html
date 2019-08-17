@@ -1,0 +1,18 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+{% if entries %}
+    <ul>
+    {% for entry in entries %}
+        <li>
+            <a href="{% url 'core:detail' entry.id %}">{{ entry.destination }}</a><br>----------------<br>
+            <a href="{% url 'core:edit' entry.id %}">Edit</a> | 
+            <a href="{% url 'core:delete' entry.id %}">Delete</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No entries are available.</p>
+{% endif %}
+<a href="{% url 'core:index'%}">Home</a>
+{% endblock %}

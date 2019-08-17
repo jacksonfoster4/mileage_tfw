@@ -1,0 +1,9 @@
+{% extends 'core/base.html' %}
+{% block content%}
+<form action='{% url "core:new" %}' method="POST">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit</button>
+</form>
+<a href="{% url 'core:index'%}">Home</a>
+{% endblock %}

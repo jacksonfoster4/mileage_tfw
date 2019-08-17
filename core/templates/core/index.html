@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+
+{% if current_entry_list %}
+    <h2>You've driven {{request.user.total_miles_driven }} miles! You've been reimbursed ${{ request.user.total_amount_reimbursed }}</h2>
+    <h3>Recent Entries</h3>
+    <ul>
+    {% for entry in current_entry_list %}
+        <li><a href="{% url 'core:detail' entry.id %}">{{ entry.destination }}</a> --- Miles driven: {{ entry.miles_driven }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No entries are available.</p>
+{% endif %}
+<a href="{% url 'core:new'%}"><button>New Entry</button></a><br><br>
+
+<a href="{% url 'core:list' %}">See all entries</a>
+<h1>TODO: spreadsheet setup, email, forgot password, basic bootstrap design</h1>
+
+{% endblock %}
