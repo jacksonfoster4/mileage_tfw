@@ -1,14 +1,15 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
+<h5>Date Published: {{entry.pub_date }} </h5>
+<hr>
 <h5>Date: {{ entry.entry_date }}</h5>
 <h1>Destination: {{ entry.destination }}</h1>
+<h3>Notes: {{ entry.notes }}</h3>
 <h2>Miles Driven: {{ entry.miles_driven }}</h2>
 <h2>Amount Reimbursed: ${{ entry.amount_reimbursed }}</h2>
-<h5>Rate: ${{ entry.reimbursement_rate }}</h5>
-<h5>Pay Period: {{ entry.pay_period_start }} - {{ entry.pay_period_end }}</h5>
 
 
-<a href="{% url 'core:edit' entry.id %}">Edit</a> | <a href="{% url 'core:delete' entry.id %}">Delete</a><br><br>
+<a href="{% url 'core:edit' entry.id %}">Edit</a> | <a href="{% url 'core:delete' entry.id %}">Delete</a> | <a href="{% url 'core:sheet' entry.id %}">View Sheet</a><br><br>
 <a href="{% url 'core:index'%}">Home</a>
 {% endblock %}

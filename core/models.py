@@ -22,12 +22,14 @@ class Entry(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
 
     entry_date = models.DateField('Date of entry')
+    pub_date = models.DateField('Last modified')
     destination = models.CharField(max_length=500)
     notes = models.CharField(max_length=500)
     odo_start = models.IntegerField()
     odo_end = models.IntegerField()
     pay_period_start = models.DateField('Week start')
     pay_period_end = models.DateField('Week end')
+    draft = models.BooleanField(default=True)
 
     
     start_of_pay_period = 4 # friday
@@ -38,7 +40,10 @@ class Entry(models.Model):
 
     @staticmethod
     def current_entries(user, date=datetime.today()):
-        current_entries = Entry.objects.filter(user=user, pay_period_start=Entry().get_start_of_pay_period_date(date=date))
+        current_entries = Entry.objects.filter(
+            user=user, 
+            pay_period_start=Entry().get_start_of_pay_period_date(date=date) # current pay period
+            )
         return current_entries
 
 
@@ -53,7 +58,9 @@ class Entry(models.Model):
         return round(rate * self.miles_driven(), 2)
     
 
-    def get_start_of_pay_period_date(self, date):
+    def get_start_of_pay_period_date(self, date=None):
+        if date is None: date = self.pub_date
+             
         one_week = timedelta(days=7)
 
         if date.weekday() >= self.start_of_pay_period: # friday, saturday and sunday
@@ -67,7 +74,9 @@ class Entry(models.Model):
             return last_friday
 
 
-    def get_end_of_pay_period_date(self, date):
+    def get_end_of_pay_period_date(self, date=None):
+        if date is None: date = self.pub_date
+
         one_week = timedelta(days=7)
 
         if date.weekday() <= self.end_of_pay_period:
@@ -90,9 +99,9 @@ class TestSpreadsheet():
         from core.models import Entry
         day = datetime.today() - timedelta(days=7)
         u = CustomUser.objects.last()
-        s = Spreadsheet(u)
-        entries = s.entries_for_pay_period(date=day)
-        self.sheet = s.write_to_spreadsheet(entries)
+        e = Entry.objects.last()
+        s = Spreadsheet(u, entry=e)
+        self.s = s
     
     def run(self):
-        return self.sheet
+        return self.s.as_dict()

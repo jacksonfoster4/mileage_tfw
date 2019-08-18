@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.apps import apps
+from preferences import preferences
 
 class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=200)
@@ -26,7 +27,7 @@ class CustomUser(AbstractUser):
         entries = Entry.objects.filter(user=self)
 
         for entry in entries:
-            amount = entry.reimbursement_rate * entry.miles_driven()
+            amount = preferences.CoreAppSettings.reimbursement_rate * entry.miles_driven() #pylint: disable=no-member
             total += amount
 
         return total

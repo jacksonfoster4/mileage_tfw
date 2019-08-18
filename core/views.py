@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import Entry
 from .forms import EntryForm
 from preferences import preferences
+from core.utils import Spreadsheet
 
 # Create your views here.
 def index(request):
@@ -56,3 +57,12 @@ def edit(request, id):
 def delete(request, id):
     Entry.objects.get(id=id).delete()
     return redirect('core:index')
+
+def view_sheet(request, id):
+    entry = Entry.objects.get(id=id)
+    sheet = Spreadsheet(request.user, entry).as_dict()
+    keys = []
+    for key in sheet['entries'][0].keys():
+            keys.append(key.title().replace("_", " "))
+    return render(request, 'core/sheet.html', {'keys': keys,'sheet': sheet, 'pay_period_start': entry.pay_period_start, 'pay_period_end': entry.pay_period_end})
+    

@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<h1>{{ pay_period_start }} - {{ pay_period_end }}</h1>
+<table id="example" class="display" style="width:100%">
+    <thead>
+        <tr>
+            {% for k in keys %}
+                <th>{{ k }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in sheet.entries %}
+            <tr>
+                {% for k,v in entry.items %}
+                    <td>{{ v }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            {% for k in keys %}
+                <th>{{ k }}</th>
+            {% endfor %}
+        </tr>
+    </tfoot>
+</table>
+<br>
+<a href="{% url 'core:index'%}">Home</a>
+{% endblock %}
