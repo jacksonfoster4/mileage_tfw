@@ -9,15 +9,17 @@ from datetime import date, timedelta
 # Create your views here.
 def index(request):
     entries = Entry.current_entries(request.user)
-    drafts = filter(lambda x: x.draft == True, entries)
-    current_entry_list = filter(lambda x: x.draft == False, entries)
+    drafts = list(filter(lambda x: x.draft == True, entries))
+    current_entry_list = list(filter(lambda x: x.draft == False, entries))
     miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
-    return render(request, 'core/index.html', {'current_entry_list': current_entry_list, 'drafts': drafts, 'miles_driven_this_period': miles_driven_this_period})
+    reimbursement_this_period = miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate # pylint: disable=no-member
+    return render(request, 'core/index.html', {'current_entry_list': current_entry_list, 'drafts': drafts, 'miles_driven_this_period': miles_driven_this_period, 'reimbursement_this_period': reimbursement_this_period})
 
 
 
-def list(request):
-    entries = Entry.objects.filter(user=request.user)
+def list_entries(request):
+    entries = list(Entry.objects.filter(user=request.user))
+    entries.reverse()
     dict = { }
     pay_periods = []
     for entry in entries:
@@ -27,7 +29,7 @@ def list(request):
         else:
                 dict[date] = [entry]
     for d in dict.keys():
-        pay_periods.append({'start_date': d, 'end_date': d + timedelta(days=7), 'entries': dict[d]})
+        pay_periods.append({'start_date': d, 'end_date': d + timedelta(days=6), 'entries': dict[d]})
     return render(request, 'core/list.html', {'pay_periods': pay_periods})
     
 
@@ -79,7 +81,8 @@ def delete(request, id):
 
 def view_sheet(request, id):
     entry = Entry.objects.get(id=id)
-    sheet = Spreadsheet(request.user, entry).as_dict()
+    entries = Entry.current_entries(request.user, entry.pub_date)
+    sheet = Spreadsheet(request.user, entries).as_dict()
     keys = []
     for key in sheet['entries'][0].keys():
             keys.append(key.title().replace("_", " "))

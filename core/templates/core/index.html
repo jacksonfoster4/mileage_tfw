@@ -3,9 +3,9 @@
 {% block content %}
 <h2>You've driven a total of {{request.user.total_miles_driven }} miles. That equals ${{ request.user.total_amount_reimbursed }}!</h2>
 {% if miles_driven_this_period %}
-    <h3>You've driven a total of {{request.user.total_miles_driven }} miles during this pay period. That equals ${{ request.user.total_amount_reimbursed }}!</h3>
-    {{ miles_driven_this_period}}
+    <h3>You've driven a total of {{ miles_driven_this_period }} miles during this pay period. That equals ${{ reimbursement_this_period }}!</h3>
 {% endif %}
+
 {% if drafts %}
     <h5>Drafts</h5>
     <ul>

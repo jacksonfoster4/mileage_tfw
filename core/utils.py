@@ -1,13 +1,17 @@
 from preferences import preferences
-from openpyxl import load_workbook
+
+from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Border, Side, Alignment
+
 from django.contrib.staticfiles import finders 
 from django.conf import settings
-from datetime import datetime
 from django.apps import apps
+
+from datetime import datetime
 
 import os
 from io import BytesIO
+
 import email, smtplib, ssl
 from email import encoders
 from email.mime.base import MIMEBase
@@ -15,13 +19,10 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 class Spreadsheet():
-    def __init__(self, user, entry=None):
+    def __init__(self, user, entries):
         self.email = preferences.CoreAppSettings.spreadsheet_email #pylint: disable=no-member
         self.user = user
-        if entry is not None:
-            self.entries = self.entries_for_pay_period(entry.get_start_of_pay_period_date(entry.pub_date))
-        else:
-            self.entries = self.entries_for_pay_period(datetime.today())
+        self.entries = entries
         self.offset = 8 # where the entries begin
 
         self.cell = lambda column, row: "{}{}".format(self.columns[column],row)
@@ -44,19 +45,7 @@ class Spreadsheet():
         }
 
     
-        self.load_spreadsheet_template()
-
-    
-    def load_spreadsheet_template(self):
-        name = finders.find("core/{}".format(settings.SPREADSHEET_NAME))
-        self.wb = load_workbook(filename=name)
-    
-
-
-    def entries_for_pay_period(self, date):
-        Entry = apps.get_model('core.Entry') # must use a lazy import, otherwise you'll get a circular import
-        entries = Entry.current_entries(self.user, date)
-        return entries
+        self.wb = Workbook()
 
 
 
@@ -125,6 +114,25 @@ class Spreadsheet():
         return self.wb.active
 
     def add_styles_to_spreadsheet(self):
+
+        cells = {
+            'A1': 'Mileage Log and Reimbursement',
+            'A3': 'Employee Name: ',
+            'D3': 'Rate Per Mile',
+            'D4': 'Total Mileage',
+            'D5': 'Total',
+            'A7': 'Date',
+            'B7': 'Destination',
+            'C7': 'Description/Notes',
+            'D7': 'Odometer Start',
+            'E7': 'Odometer End',
+            'F7': 'Mileage',
+            'G7': 'Reimbursement',
+        }
+        for k, v in cells:
+            self.wb.active[k] = v
+
+            
         #reset spreadsheet. colors get messed up for some reason. might be from BytesIO -> .xlsx
         for i, row in enumerate(self.wb.active.rows,1):
             for cell in self.wb.active[i]:
@@ -190,7 +198,6 @@ class Spreadsheet():
         
                         
                                       
-
     def save_as_binary_stream(self):
         stream = BytesIO()
         self.wb.save(stream)
