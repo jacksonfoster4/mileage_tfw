@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-from dotenv import load_dotenv
+from dotenv import load_dotenv # pylint: disable=import-error
 load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -51,16 +51,28 @@ INSTALLED_APPS = [
 
 STATIC_URL = '/static/'
 SPREADSHEET_NAME = 'spreadsheet_template.xlsx'
+
 AUTH_USER_MODEL = 'users.CustomUser' # new
 LOGIN_REDIRECT_URL = '/app' # new
 LOGOUT_REDIRECT_URL = 'home' # new
-SITE_ID = 1 # new
+
+SITE_ID = 2 # new
+
 BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = 'UTC' 
+
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # During development only
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_BACKEND = 'django_smtp_ssl.SSLEmailBackend' # During production. required to use SSL (port 465. otherwise use port 587)
+EMAIL_PORT = 465
+EMAIL_HOST_USER = os.getenv("SENDER_EMAIL")
+EMAIL_HOST_PASSWORD = os.getenv("SENDER_EMAIL_PASSWORD")
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = "Jackson TFW <{}>".format(os.getenv("SENDER_EMAIL"))
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
