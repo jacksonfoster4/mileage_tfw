@@ -4,17 +4,31 @@ from .models import Entry
 from .forms import EntryForm
 from preferences import preferences
 from core.utils import Spreadsheet
+from datetime import date, timedelta
 
 # Create your views here.
 def index(request):
-    current_entry_list = Entry.current_entries(request.user)
-    return render(request, 'core/index.html', {'current_entry_list': current_entry_list})
+    entries = Entry.current_entries(request.user)
+    drafts = filter(lambda x: x.draft == True, entries)
+    current_entry_list = filter(lambda x: x.draft == False, entries)
+    miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
+    return render(request, 'core/index.html', {'current_entry_list': current_entry_list, 'drafts': drafts, 'miles_driven_this_period': miles_driven_this_period})
 
 
 
 def list(request):
     entries = Entry.objects.filter(user=request.user)
-    return render(request, 'core/list.html', {'entries': entries})
+    dict = { }
+    pay_periods = []
+    for entry in entries:
+        date = entry.get_start_of_pay_period_date()
+        if date in dict:
+                dict[date].append(entry)
+        else:
+                dict[date] = [entry]
+    for d in dict.keys():
+        pay_periods.append({'start_date': d, 'end_date': d + timedelta(days=7), 'entries': dict[d]})
+    return render(request, 'core/list.html', {'pay_periods': pay_periods})
     
 
 
@@ -24,6 +38,8 @@ def new(request):
         if form.is_valid():
             form.save(request)
             return redirect('core:index')
+        else:
+            return render(request, 'core/new.html', {'form': form })
     else:
         form = EntryForm()
         return render(request, 'core/new.html', {'form': form})
@@ -38,6 +54,9 @@ def detail(request, id):
 
 def edit(request, id):
     entry = Entry.objects.get(id=id)
+    warning = None
+    if entry.pub_date < entry.get_start_of_pay_period_date(date=date.today()):
+        warning = "This entry will be moved to the current pay period. Are you sure you want to continue?"
 
     if request.method == 'POST':
         form = EntryForm(request.POST, instance=entry)
@@ -46,11 +65,11 @@ def edit(request, id):
             form.save(request)
             return redirect('core:index')
         else:
-                return render(request, 'core/edit.html', {'form': form, 'entry': entry })
+            return render(request, 'core/edit.html', {'form': form, 'entry': entry, 'warning': warning })
 
     else:
         form = EntryForm(instance=entry)
-        return render(request, 'core/edit.html', {'form': form, 'entry': entry})
+        return render(request, 'core/edit.html', {'form': form, 'entry': entry, 'warning': warning})
 
 
 

@@ -2,8 +2,10 @@ from django.db import models
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.contrib.staticfiles import finders 
+from decimal import Decimal
 
 from users.models import CustomUser
+from .utils import Spreadsheet
 
 from openpyxl import load_workbook
 from preferences.models import Preferences
@@ -30,6 +32,7 @@ class Entry(models.Model):
     pay_period_start = models.DateField('Week start')
     pay_period_end = models.DateField('Week end')
     draft = models.BooleanField(default=True)
+    emailed = models.BooleanField(default=False)
 
     
     start_of_pay_period = 4 # friday
@@ -42,7 +45,8 @@ class Entry(models.Model):
     def current_entries(user, date=datetime.today()):
         current_entries = Entry.objects.filter(
             user=user, 
-            pay_period_start=Entry().get_start_of_pay_period_date(date=date) # current pay period
+            pub_date__gte=Entry().get_start_of_pay_period_date(date=date), # current pay period
+            pub_date__lte=Entry().get_end_of_pay_period_date(date=date) # current pay period
             )
         return current_entries
 
@@ -55,7 +59,8 @@ class Entry(models.Model):
 
     def amount_reimbursed(self):
         rate = preferences.CoreAppSettings.reimbursement_rate #pylint: disable=no-member
-        return round(rate * self.miles_driven(), 2)
+        total = rate * self.miles_driven()
+        return Decimal('{:.2f}'.format(round(total,2)))
     
 
     def get_start_of_pay_period_date(self, date=None):
@@ -90,18 +95,8 @@ class Entry(models.Model):
             next_thursday = last_thursday + one_week
 
             return next_thursday
-
-class TestSpreadsheet():
-    def __init__(self):
-        from datetime import datetime, timedelta
-        from users.models import CustomUser
-        from core.utils import Spreadsheet
-        from core.models import Entry
-        day = datetime.today() - timedelta(days=7)
-        u = CustomUser.objects.last()
-        e = Entry.objects.last()
-        s = Spreadsheet(u, entry=e)
-        self.s = s
     
-    def run(self):
-        return self.s.as_dict()
+    def send_spreadsheet(self):
+        s = Spreadsheet(self.user, self)
+        s.write_to_spreadsheet()
+        s.email_spreadsheet()

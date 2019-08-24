@@ -2,10 +2,14 @@
 
 {% block content %}
 {{ form.errors }}
+{% if warning %}
+    {{ warning }}
+{% endif %}
 <form action='{% url "core:edit" entry.id %}' method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Submit</button>
+    <button type="submit" name="save_as_draft">Save as Draft</button>
+    <button type="submit" name="save">Save</button>
 </form>
 <a href="{% url 'core:index'%}">Home</a>
 {% endblock %}

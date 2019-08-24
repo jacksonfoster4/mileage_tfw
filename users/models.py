@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.apps import apps
 from preferences import preferences
+from decimal import Decimal
 
 class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=200)
@@ -13,7 +14,7 @@ class CustomUser(AbstractUser):
     def total_miles_driven(self):
         total = 0
         Entry = apps.get_model('core.Entry') # must use a lazy import, otherwise you'll get a circular import
-        entries = Entry.objects.filter(user=self)
+        entries = Entry.objects.filter(user=self, draft=False)
 
         for entry in entries:
             miles_driven = entry.odo_end - entry.odo_start
@@ -24,10 +25,10 @@ class CustomUser(AbstractUser):
     def total_amount_reimbursed(self):
         total = 0
         Entry = apps.get_model('core.Entry') # must use a lazy import, otherwise you'll get a circular import
-        entries = Entry.objects.filter(user=self)
+        entries = Entry.objects.filter(user=self, draft=False)
 
         for entry in entries:
             amount = preferences.CoreAppSettings.reimbursement_rate * entry.miles_driven() #pylint: disable=no-member
             total += amount
 
-        return total
+        return Decimal('{:.2f}'.format(round(total,2)))

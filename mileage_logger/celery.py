@@ -1,13 +1,41 @@
-from __future__ import absolute_import, unicode_literals
+from __future__ import absolute_import
 import os
-from celery import Celery
+import django
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'proj.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mileage_logger.settings')
+django.setup() # apps need to be installed before models are imported
+
+from celery import Celery
+from celery.schedules import crontab
+from users.models import CustomUser
+from core.models import Entry
+from datetime import date, timedelta
+
 
 app = Celery('mileage_logger')
-app.config_from_object('django.conf:settings', namespace='CELERY')
-app.autodiscover_tasks()
+app.config_from_object('django.conf:settings')
+app.conf.timezone = 'US/Pacific'
 
-@app.task(bind=True)
-def debug_task(self):
-    print('Request: {0!r}'.format(self.request))
+app.conf.beat_schedule = {
+    # Executes every Friday at 00:00.
+    'send-sheets-every-friday-morning': {
+        'task': 'send_spreadsheets',
+        'schedule': crontab(hour=0, minute=0, day_of_week=5),
+    },
+}
+
+@app.task(name="send_spreadsheets")
+def send_spreadsheets():
+    users = CustomUser.objects.all()
+    for user in users:
+        filter_current_entries = lambda entry: entry.get_end_of_pay_period_date() == date.today() and entry.draft==False
+        entries = list( filter( filter_current_entries, Entry.objects.filter(user=user) ) )
+        if entries:
+                entries[0].send_spreadsheet() # send spreadsheet method sends all spreadsheets within same period
+
+
+""" need to initialize beat scheduler 
+        celery -A mileage_logger beat 
+    and then initialize the worker process
+        celery -A mileage_logger worker -l INFO
+"""
