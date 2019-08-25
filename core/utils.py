@@ -228,21 +228,25 @@ class Spreadsheet():
         message["To"] = receiver_email
 
         text = """\
-                Hi,
-                How are you?
-                Real Python has many great tutorials:
-                www.realpython.com"""
+                Hey Bryant,
+                Attached is my mileage log for this week.
+                
+                Thanks!
+
+                {}
+                """.format(self.user.first_name)
         html = """\
                 <html>
                 <body>
-                    <p>Hi,<br>
-                    How are you?<br>
-                    <a style='color:red'href="http://www.realpython.com">Real Python</a> 
-                    has many great tutorials.
+                    <p>Hey Bryant, <br><br>
+                    Attached is my mileage log for this week.<br><br>
+                    Thanks!<br><br>
+                    {}
                     </p>
+                    <br><br><br><br>
                 </body>
                 </html>
-                """
+                """.format(self.user.first_name)
         part1 = MIMEText(text, "plain")
         part2 = MIMEText(html, "html")
         
