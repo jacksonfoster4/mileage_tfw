@@ -1,4 +1,5 @@
 # TODO
 * email template 
-* front end
+* basic front end
 * tests
+* deploy
