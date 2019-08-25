@@ -46,6 +46,11 @@ class Spreadsheet():
 
     
         self.wb = Workbook()
+        self.wb.active.title = 'Mileage Log and Reimbursement'
+    
+    def send_spreadsheet(self):
+        self.write_to_spreadsheet()
+        self.email_spreadsheet()
 
 
 
@@ -116,8 +121,8 @@ class Spreadsheet():
     def add_styles_to_spreadsheet(self):
 
         cells = {
-            'A1': 'Mileage Log and Reimbursement',
-            'A3': 'Employee Name: ',
+            "A1": 'Mileage Log and Reimbursement',
+            "A3": 'Employee Name: ',
             'D3': 'Rate Per Mile',
             'D4': 'Total Mileage',
             'D5': 'Total',
@@ -129,8 +134,8 @@ class Spreadsheet():
             'F7': 'Mileage',
             'G7': 'Reimbursement',
         }
-        for k, v in cells:
-            self.wb.active[k] = v
+        for k in cells.items():
+            self.wb.active[k[0]] = k[1]
 
             
         #reset spreadsheet. colors get messed up for some reason. might be from BytesIO -> .xlsx
@@ -163,7 +168,12 @@ class Spreadsheet():
         employee_name_label = 'A3'
         totals_labels = ['D3', 'D4', 'D5']
         totals = ['E3', 'E4', 'E5']
-        
+
+        columns = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+        for col in columns:
+            self.wb.active.column_dimensions[col].width = 25
+
+
         for cell in list(self.wb.active.rows)[6]: # format column titles
             cell.font = Font(name='Arial', bold=True, size=18)
             cell.alignment = Alignment(horizontal='center', vertical='center')
@@ -175,9 +185,9 @@ class Spreadsheet():
                             ) 
             cell.fill = PatternFill(fgColor="A8A8A8", fill_type = "solid")
 
-        for el in title: # format large spreadsheet title
-            self.wb.active[el].font = Font(name='Arial', color='000000', bold=True, size=18)
-            self.wb.active[el].alignment = Alignment(horizontal='left')
+        # format large spreadsheet title
+        self.wb.active['A1'].font = Font(name='Arial', color='000000', bold=True, size=25)
+        self.wb.active['A1'].alignment = Alignment(horizontal='left')
 
         # format employee name
         self.wb.active[employee_name_label].font = Font(name='Arial', color="000000", size=14, bold=True)

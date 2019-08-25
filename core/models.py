@@ -5,7 +5,6 @@ from django.contrib.staticfiles import finders
 from decimal import Decimal
 
 from users.models import CustomUser
-from .utils import Spreadsheet
 
 from openpyxl import load_workbook
 from preferences.models import Preferences
@@ -95,8 +94,4 @@ class Entry(models.Model):
             next_thursday = last_thursday + one_week
 
             return next_thursday
-    
-    def send_spreadsheet(self):
-        s = Spreadsheet(self.user, self)
-        s.write_to_spreadsheet()
-        s.email_spreadsheet()
+

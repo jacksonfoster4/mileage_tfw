@@ -9,6 +9,7 @@ from celery import Celery
 from celery.schedules import crontab
 from users.models import CustomUser
 from core.models import Entry
+from core.utils import Spreadsheet
 from datetime import date, timedelta
 
 
@@ -31,9 +32,17 @@ def send_spreadsheets():
         filter_current_entries = lambda entry: entry.get_end_of_pay_period_date() == date.today() and entry.draft==False
         entries = list( filter( filter_current_entries, Entry.objects.filter(user=user) ) )
         if entries:
-                entries[0].send_spreadsheet() # send spreadsheet method sends all spreadsheets within same period
+                Spreadsheet(user, entries).send_spreadsheet()
 
-
+@app.task(name="test_send_spreadsheets")
+def test_send_spreadsheets():
+    users = CustomUser.objects.all()
+    for user in users:
+        filter_current_entries = lambda entry: entry.get_end_of_pay_period_date() == (date.today()-timedelta(days=2)) and entry.draft==False
+        entries = list( filter( filter_current_entries, Entry.objects.filter(user=user) ) )
+        if entries:
+                Spreadsheet(user, entries).send_spreadsheet()
+test_send_spreadsheets.delay()
 """ need to initialize beat scheduler 
         celery -A mileage_logger beat 
     and then initialize the worker process
