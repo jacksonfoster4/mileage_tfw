@@ -48,40 +48,11 @@ class Spreadsheet():
         self.wb = Workbook()
         self.wb.active.title = 'Mileage Log and Reimbursement'
     
+
+
     def send_spreadsheet(self):
         self.write_to_spreadsheet()
         self.email_spreadsheet()
-
-
-
-    def as_dict(self):
-        ws = self.wb.active
-        total_miles, total_reimbursement = 0, 0
-
-        final = {'entries': []}
-
-        for entry in self.entries:
-            entry_dict = {}
-            total_miles += entry.miles_driven()
-            total_reimbursement += entry.amount_reimbursed()
-
-            entry_dict['date'] = entry.entry_date.strftime("%m-%d-%Y")
-            entry_dict['destination'] = entry.destination
-            entry_dict['notes'] = entry.notes
-            entry_dict['odometer_start'] = entry.odo_start
-            entry_dict['odometer_end'] = entry.odo_end
-            entry_dict['mileage'] = entry.miles_driven()
-            entry_dict['reimbursement'] = entry.amount_reimbursed()
-
-            final['entries'].append(entry_dict)
-        
-
-        final['total_mileage'] = total_miles
-        final['total_reimbursement'] = total_reimbursement
-        final['reimbursement_rate'] = "${}".format(preferences.CoreAppSettings.reimbursement_rate) # pylint: disable=no-member
-        final['employee_name'] = "{} {}".format(self.user.first_name, self.user.last_name)
-
-        return final
 
 
 
@@ -118,8 +89,111 @@ class Spreadsheet():
         self.add_styles_to_spreadsheet()
         return self.wb.active
 
-    def add_styles_to_spreadsheet(self):
 
+
+    def as_dict(self):
+        ws = self.wb.active
+        total_miles, total_reimbursement = 0, 0
+
+        final = {'entries': []}
+
+        for entry in self.entries:
+            entry_dict = {}
+            total_miles += entry.miles_driven()
+            total_reimbursement += entry.amount_reimbursed()
+
+            entry_dict['date'] = entry.entry_date.strftime("%m-%d-%Y")
+            entry_dict['destination'] = entry.destination
+            entry_dict['notes'] = entry.notes
+            entry_dict['odometer_start'] = entry.odo_start
+            entry_dict['odometer_end'] = entry.odo_end
+            entry_dict['mileage'] = entry.miles_driven()
+            entry_dict['reimbursement'] = entry.amount_reimbursed()
+
+            final['entries'].append(entry_dict)
+        
+
+        final['total_mileage'] = total_miles
+        final['total_reimbursement'] = total_reimbursement
+        final['reimbursement_rate'] = "${}".format(preferences.CoreAppSettings.reimbursement_rate) # pylint: disable=no-member
+        final['employee_name'] = "{} {}".format(self.user.first_name, self.user.last_name)
+
+        return final
+
+                              
+                                      
+    def save_as_binary_stream(self):
+        stream = BytesIO()
+        self.wb.save(stream)
+        return stream
+    
+
+
+    def email_spreadsheet(self):
+        port = 465  # For SSL
+
+        sender_email = os.getenv("SENDER_EMAIL")
+        password = os.getenv("SENDER_EMAIL_PASSWORD")
+        receiver_email = preferences.CoreAppSettings.spreadsheet_email # pylint: disable=no-member
+
+        message = MIMEMultipart("alternative")
+        message["Subject"] = "multipart test"
+        message["From"] = sender_email
+        message["To"] = receiver_email
+
+        text = """\
+                Hey Bryant,
+                Attached is my mileage log for this week.
+                
+                Thanks!
+
+                {}
+                """.format(self.user.first_name)
+
+        html = """\
+                <html>
+                <body>
+                    <p>Hey Bryant, <br><br>
+                    Attached is my mileage log for this week.<br><br>
+                    Thanks!<br><br>
+                    {}
+                    </p>
+                    <br><br><br><br>
+                </body>
+                </html>
+                """.format(self.user.first_name)
+        part1 = MIMEText(text, "plain")
+        part2 = MIMEText(html, "html")
+        
+        part = MIMEBase("application", "octet-stream")
+        part.set_payload(self.save_as_binary_stream().getvalue())
+
+        # Encode file in ASCII characters to send by email    
+        encoders.encode_base64(part)
+
+        # Add header as key/value pair to attachment part
+        part.add_header(
+            "Content-Disposition",
+            f"attachment; filename= {self.wb.active.title}.xlsx",
+        )
+
+        # Add attachment to message and convert message to string
+        message.attach(part)
+        text = message.as_string()
+
+        message.attach(part1)
+        message.attach(part2)
+        # Create a secure SSL context
+        context = ssl.create_default_context()
+
+        with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message.as_string())
+    
+
+
+    def add_styles_to_spreadsheet(self):
+        # this function is obnoxious
         cells = {
             "A1": 'Mileage Log and Reimbursement',
             "A3": 'Employee Name: ',
@@ -205,75 +279,6 @@ class Spreadsheet():
         
         for cell in self.wb.active[len(self.entries)+self.offset]: # format total row at the end of entries
             cell.font = Font(name='Arial', color='000000', bold=True, size=18)
-        
-                        
-                                      
-    def save_as_binary_stream(self):
-        stream = BytesIO()
-        self.wb.save(stream)
-        return stream
-    
-
-
-    def email_spreadsheet(self):
-        port = 465  # For SSL
-
-        sender_email = os.getenv("SENDER_EMAIL")
-        password = os.getenv("SENDER_EMAIL_PASSWORD")
-        receiver_email = preferences.CoreAppSettings.spreadsheet_email # pylint: disable=no-member
-
-        message = MIMEMultipart("alternative")
-        message["Subject"] = "multipart test"
-        message["From"] = sender_email
-        message["To"] = receiver_email
-
-        text = """\
-                Hey Bryant,
-                Attached is my mileage log for this week.
-                
-                Thanks!
-
-                {}
-                """.format(self.user.first_name)
-        html = """\
-                <html>
-                <body>
-                    <p>Hey Bryant, <br><br>
-                    Attached is my mileage log for this week.<br><br>
-                    Thanks!<br><br>
-                    {}
-                    </p>
-                    <br><br><br><br>
-                </body>
-                </html>
-                """.format(self.user.first_name)
-        part1 = MIMEText(text, "plain")
-        part2 = MIMEText(html, "html")
-        
-        part = MIMEBase("application", "octet-stream")
-        part.set_payload(self.save_as_binary_stream().getvalue())
-
-        # Encode file in ASCII characters to send by email    
-        encoders.encode_base64(part)
-
-        # Add header as key/value pair to attachment part
-        part.add_header(
-            "Content-Disposition",
-            f"attachment; filename= {self.wb.active.title}.xlsx",
-        )
-
-        # Add attachment to message and convert message to string
-        message.attach(part)
-        text = message.as_string()
-
-        message.attach(part1)
-        message.attach(part2)
-        # Create a secure SSL context
-        context = ssl.create_default_context()
-
-        with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-            server.login(sender_email, password)
-            server.sendmail(sender_email, receiver_email, message.as_string())
 
 
 

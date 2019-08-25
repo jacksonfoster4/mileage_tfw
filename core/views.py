@@ -23,7 +23,7 @@ def list_entries(request):
     dict = { }
     pay_periods = []
     for entry in entries:
-        date = entry.get_start_of_pay_period_date()
+        date = entry.pay_period_start
         if date in dict:
                 dict[date].append(entry)
         else:
