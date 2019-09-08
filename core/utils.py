@@ -142,7 +142,7 @@ class Spreadsheet():
         message["To"] = receiver_email
 
         text = """\
-                Hey Bryant,
+                Hey Brad,
                 Attached is my mileage log for this week.
                 
                 Thanks!
@@ -153,7 +153,7 @@ class Spreadsheet():
         html = """\
                 <html>
                 <body>
-                    <p>Hey Bryant, <br><br>
+                    <p>Hey Brad, <br><br>
                     Attached is my mileage log for this week.<br><br>
                     Thanks!<br><br>
                     {}

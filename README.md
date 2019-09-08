@@ -1,4 +1,5 @@
 # TODO
-* basic front end
 * tests
+* refactor email templates
+* add login_required functionality
 * deploy
