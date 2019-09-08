@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 import os
 import sys
-
+import django
+path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if path not in sys.path:
+    sys.path.append(path)
 if __name__ == "__main__":
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "mileage_logger.settings")
     try:
@@ -12,4 +15,5 @@ if __name__ == "__main__":
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+    django.setup()
     execute_from_command_line(sys.argv)

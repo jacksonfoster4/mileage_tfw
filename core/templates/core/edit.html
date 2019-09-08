@@ -8,8 +8,7 @@
 <form action='{% url "core:edit" entry.id %}' method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" name="save_as_draft">Save as Draft</button>
-    <button type="submit" name="save">Save</button>
+    <button type="submit" class="btn btn-secondary"name="save_as_draft">Save as Draft</button>
+    <button type="submit" class="btn btn-primary"name="save">Save</button>
 </form>
-<a href="{% url 'core:index'%}">Home</a>
 {% endblock %}

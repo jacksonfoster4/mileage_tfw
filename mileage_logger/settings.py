@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig', # new
     'core.apps.CoreConfig', # new
     'preferences', # new
-    'django_extensions'
+    'django_extensions' # new
 
 ]
 # Static files (CSS, JavaScript, Images)

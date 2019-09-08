@@ -76,7 +76,7 @@ def edit(request, id):
 
 
 def delete(request, id):
-    Entry.objects.get(id=id).delete()
+    Entry.objects.filter(id=id).delete()
     return redirect('core:index')
 
 def view_sheet(request, id):
