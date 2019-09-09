@@ -1,21 +1,57 @@
 from django.test import TestCase
 from .models import Entry
 from .utils import Spreadsheet
-
+from datetime import datetime, timedelta
+from users.models import CustomUser
 # Create your tests here.
 class EntryTestCase(TestCase):
-    # create series of past entries
-    # create series of future entries
-    # create series of current entries
 
-    # current_entries(...)
+
+#    current_entries(...)
         # does it return [] for past entries?
         # does it return [] for future entries
         # does it return QuerySet for current entries?
+    def test_current_entries_past(self):
+        user = CustomUser.objects.create(first_name = "Mr.", last_name= "Past", username="Past User")
+        past = [{"user":user, "entry_date": datetime.today()-timedelta(days=12), "pub_date":datetime.today()-timedelta(days=12), "destination": "Job 1", "odo_start":123, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()-timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()-timedelta(days=12))}, 
+        {"user":user, "entry_date": datetime.today()-timedelta(days=12), "pub_date":datetime.today()-timedelta(days=12), "destination": "Job 2", "odo_start":128, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()-timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()-timedelta(days=12))}, 
+        {"user":user, "entry_date": datetime.today()-timedelta(days=12), "pub_date":datetime.today()-timedelta(days=12), "destination": "Job 3", "odo_start":163, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()-timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()-timedelta(days=12))}]
+        past_entries = [ Entry.objects.create(**e) for e in past ]
+
+        self.assertEquals(len(Entry.current_entries(user)), 0) 
+
+
+
+
+    def test_current_entries_current(self):
+        user = CustomUser.objects.create(first_name = "Mr.", last_name= "Present", username="Current User")
+        current = [{"user":user, "entry_date": datetime.today(), "pub_date":datetime.today(), "destination": "Job 1", "odo_start":123, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}, 
+        {"user":user, "entry_date": datetime.today(), "pub_date":datetime.today(), "destination": "Job 2", "odo_start":128, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}, 
+        {"user":user, "entry_date": datetime.today(), "pub_date":datetime.today(), "destination": "Job 3", "odo_start":163, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}]
+        current_entries = [ Entry.objects.create(**e) for e in current ]
+
+        self.assertEquals(len(Entry.current_entries(user)), 3) 
+
+
+
+    def test_current_entries_future(self):
+        user = CustomUser.objects.create(first_name = "Mr.", last_name= "Future", username="Future User")
+        future = [{"user":user, "entry_date": datetime.today()+timedelta(days=12), "pub_date":datetime.today()+timedelta(days=12), "destination": "Job 1", "odo_start":123, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()+timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()+timedelta(days=12))}, 
+        {"user":user, "entry_date": datetime.today()+timedelta(days=12), "pub_date":datetime.today()+timedelta(days=12), "destination": "Job 2", "odo_start":128, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()+timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()+timedelta(days=12))}, 
+        {"user":user, "entry_date": datetime.today()+timedelta(days=12), "pub_date":datetime.today()+timedelta(days=12), "destination": "Job 3", "odo_start":163, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()+timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()+timedelta(days=12))}]
+        future_entries = [ Entry.objects.create(**e) for e in future ]
+        
+        # is `current_entries` empty?
+        self.assertEquals(len(Entry.current_entries(user)), 0) 
+        
+
+
     
+    def test_miles_driven(self):
+        pass
     # miles_driven(...) 
         # does miles driven return a positive integer?
-        # how does it handle blank blank odometer readings?
+        # how does it handle blank odometer readings?
         # how does it handle negative odometer readings?
     
     # amount_reimbursed(...)
