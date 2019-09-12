@@ -47,6 +47,7 @@ class Spreadsheet():
     
         self.wb = Workbook()
         self.wb.active.title = 'Mileage Log and Reimbursement'
+        self.worksheet = self.wb.active
     
 
 
@@ -76,9 +77,13 @@ class Spreadsheet():
 
         ws[self.cells['total_mileage']] = total_miles
         ws[self.cells['total_reimbursement']] = "${}".format(total_reimbursement)
-        ws[self.cells['reimbursement_rate']] = "${}".format(preferences.CoreAppSettings.reimbursement_rate) # pylint: disable=no-member
-        ws[self.cells['employee_name']] = "{} {}".format(self.user.first_name, self.user.last_name)
 
+        if preferences.CoreAppSettings.reimbursement_rate:
+            ws[self.cells['reimbursement_rate']] = "${}".format(preferences.CoreAppSettings.reimbursement_rate) # pylint: disable=no-member
+        else:
+            ws[self.cells['reimbursement_rate']] = "${}".format(0.53) # pylint: disable=no-member
+
+        ws[self.cells['employee_name']] = "{} {}".format(self.user.first_name, self.user.last_name)
         end_of_entries = len(self.entries) + self.offset
         ws["A{}".format(end_of_entries)] = 'Total'
         ws[self.cell('mileage', end_of_entries)] = total_miles

@@ -1,13 +1,26 @@
 from django.test import TestCase
-from .models import Entry
+from .models import Entry, CoreAppSettings
 from .utils import Spreadsheet
 from datetime import datetime, timedelta
 from users.models import CustomUser
+from preferences import preferences
+from decimal import Decimal
+from io import BytesIO
+
 # Create your tests here.
+    
 class EntryTestCase(TestCase):
-
-
-#    current_entries(...)
+    @classmethod
+    def setUpTestData(self):
+        self.reimbursement_rate = 0.53
+        self.user = CustomUser.objects.create(first_name = "Mr.", last_name= "Present", username="Current User")
+        self.entries = [{"user":self.user, "entry_date": datetime.today(), "pub_date":datetime.today(), "notes": "Test Entry", "destination": "Job 1", "odo_start":123, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}, 
+        {"user":self.user, "entry_date": datetime.today(), "pub_date":datetime.today(), "notes": "Test Entry", "destination": "Job 2", "odo_start":128, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}, 
+        {"user":self.user, "entry_date": datetime.today(), "pub_date":datetime.today(), "notes": "Test Entry", "destination": "Job 3", "odo_start":163, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}]
+        
+        [ Entry.objects.create(**e) for e in self.entries ]
+        self.entries = Entry.objects.filter(user_id=self.user.id)
+    #current_entries(...)
         # does it return [] for past entries?
         # does it return [] for future entries
         # does it return QuerySet for current entries?
@@ -16,22 +29,13 @@ class EntryTestCase(TestCase):
         past = [{"user":user, "entry_date": datetime.today()-timedelta(days=12), "pub_date":datetime.today()-timedelta(days=12), "destination": "Job 1", "odo_start":123, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()-timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()-timedelta(days=12))}, 
         {"user":user, "entry_date": datetime.today()-timedelta(days=12), "pub_date":datetime.today()-timedelta(days=12), "destination": "Job 2", "odo_start":128, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()-timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()-timedelta(days=12))}, 
         {"user":user, "entry_date": datetime.today()-timedelta(days=12), "pub_date":datetime.today()-timedelta(days=12), "destination": "Job 3", "odo_start":163, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()-timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()-timedelta(days=12))}]
-        past_entries = [ Entry.objects.create(**e) for e in past ]
+        
+        [ Entry.objects.create(**e) for e in past ]
 
         self.assertEquals(len(Entry.current_entries(user)), 0) 
 
-
-
-
     def test_current_entries_current(self):
-        user = CustomUser.objects.create(first_name = "Mr.", last_name= "Present", username="Current User")
-        current = [{"user":user, "entry_date": datetime.today(), "pub_date":datetime.today(), "destination": "Job 1", "odo_start":123, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}, 
-        {"user":user, "entry_date": datetime.today(), "pub_date":datetime.today(), "destination": "Job 2", "odo_start":128, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}, 
-        {"user":user, "entry_date": datetime.today(), "pub_date":datetime.today(), "destination": "Job 3", "odo_start":163, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}]
-        current_entries = [ Entry.objects.create(**e) for e in current ]
-
-        self.assertEquals(len(Entry.current_entries(user)), 3) 
-
+        self.assertEquals(len(Entry.current_entries(self.user)), 3) 
 
 
     def test_current_entries_future(self):
@@ -39,49 +43,80 @@ class EntryTestCase(TestCase):
         future = [{"user":user, "entry_date": datetime.today()+timedelta(days=12), "pub_date":datetime.today()+timedelta(days=12), "destination": "Job 1", "odo_start":123, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()+timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()+timedelta(days=12))}, 
         {"user":user, "entry_date": datetime.today()+timedelta(days=12), "pub_date":datetime.today()+timedelta(days=12), "destination": "Job 2", "odo_start":128, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()+timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()+timedelta(days=12))}, 
         {"user":user, "entry_date": datetime.today()+timedelta(days=12), "pub_date":datetime.today()+timedelta(days=12), "destination": "Job 3", "odo_start":163, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()+timedelta(days=12)),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today()+timedelta(days=12))}]
-        future_entries = [ Entry.objects.create(**e) for e in future ]
+        
+        [ Entry.objects.create(**e) for e in future ]
         
         # is `current_entries` empty?
         self.assertEquals(len(Entry.current_entries(user)), 0) 
         
-
-
-    
     def test_miles_driven(self):
-        pass
-    # miles_driven(...) 
-        # does miles driven return a positive integer?
-        # how does it handle blank odometer readings?
-        # how does it handle negative odometer readings?
+        for entry in self.entries:
+            self.assertEquals(entry.miles_driven(), entry.odo_end - entry.odo_start)
+        
+    def test_amount_reimbursed(self):
+        for entry in self.entries:
+            self.assertEquals(entry.amount_reimbursed(rate=self.reimbursement_rate), Decimal('{:.2f}'.format(round(entry.miles_driven() * self.reimbursement_rate, 2))))
     
-    # amount_reimbursed(...)
-        # does it return the proper amount rounded to two decimal places
+    def test_get_start_of_pay_period_date(self):
+        pub_date = datetime(2019, 9, 9)
+        pay_period_start = datetime(2019, 9, 6)
+        self.assertEquals(Entry().get_start_of_pay_period_date(date=pub_date), pay_period_start)
     
-    # get_start_of_pay_period_date(...)
-        # given no date, does the function return the start of the pay period of `self`?
-        # given a date, does the function return the correct start of the pay period?
-        # can it handle an invalid date?
-
-    # get_end_of_pay_period_date(...)
-        # given no date, does the function return the end of the pay period of `self`?
-        # given a date, does the function return the correct end of the pay period?
-        # can it handle an invalid date?
-    pass
+    def test_get_start_of_pay_period_date(self):
+        pub_date = datetime(2019, 9, 9)
+        pay_period_start = datetime(2019, 9, 6)
+        self.assertEquals(Entry().get_start_of_pay_period_date(date=pub_date), pay_period_start)
+            
+    def test_get_start_of_pay_period_date(self):
+        pub_date = datetime(2019, 9, 9)
+        pay_period_end = datetime(2019, 9, 12)
+        self.assertEquals(Entry().get_end_of_pay_period_date(date=pub_date), pay_period_end)
 
 class SpreadsheetTestCase(TestCase):
-    # create a list of entries
-    # create user
+    @classmethod
+    def setUpTestData(self):
+        self.reimbursement_rate = 0.53
+        self.user = CustomUser.objects.create(first_name = "Mr.", last_name= "Present", username="Current User")
+        self.entries = [{"user":self.user, "entry_date": datetime.today(), "pub_date":datetime.today(), "notes": "Test Entry", "destination": "Job 1", "odo_start":123, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}, 
+        {"user":self.user, "entry_date": datetime.today(), "pub_date":datetime.today(), "notes": "Test Entry", "destination": "Job 2", "odo_start":128, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}, 
+        {"user":self.user, "entry_date": datetime.today(), "pub_date":datetime.today(), "notes": "Test Entry", "destination": "Job 3", "odo_start":163, "odo_end": 456, "pay_period_start": Entry().get_start_of_pay_period_date(datetime.today()),"pay_period_end": Entry().get_end_of_pay_period_date(datetime.today())}]
+        
+        [ Entry.objects.create(**e) for e in self.entries ]
 
-    # write_to_spreadsheet(...)
-        # check each cell to ensure it matches entries and user
+        self.entries = Entry.objects.filter(user_id=self.user.id)
+        self.workbook = Spreadsheet(self.user, self.entries)
+        self.sheet = self.workbook.write_to_spreadsheet()
+
+    def test_write_to_spreadsheet(self):
+        miles_driven = 0
+        total_reimbursement = 0
+        for i, entry in enumerate(self.entries):
+            expected_values = {
+                'B3': "{} {}".format(self.user.first_name, self.user.last_name),
+                'E3': "${}".format(self.reimbursement_rate),
+                "A{}".format(i+8): entry.pub_date.strftime("%m-%d-%Y"),
+                "B{}".format(i+8): entry.destination,
+                "C{}".format(i+8): entry.notes,
+                "D{}".format(i+8): entry.odo_start,
+                "E{}".format(i+8): entry.odo_end,
+                "F{}".format(i+8): entry.miles_driven(),
+                "G{}".format(i+8): "${}".format(round(entry.miles_driven() * self.reimbursement_rate, 2))
+            }
+            miles_driven += entry.miles_driven()
+            total_reimbursement +=  round(entry.miles_driven() * self.reimbursement_rate, 2)
+
+            for cell, expected_value in expected_values.items():
+                self.assertEquals(self.sheet[cell].value, expected_value)
+
+        self.assertEquals(self.sheet['E4'].value, miles_driven)
+        self.assertEquals(self.sheet['E5'].value, "${}".format(total_reimbursement))
 
     # as_dict(...)
         # check each key to ensure it matches entries and user
+    def test_save_to_binary_stream(self):
+        self.assertIsInstance(self.workbook.save_as_binary_stream(), BytesIO)
 
-    # save_as_binary_stream(...)
-        # does it return a binary stream
-
-    pass
+    
 
 class CoreIndexViewTests(TestCase):
     # if i navigate to 'app/' does it render 'core/index.html'?

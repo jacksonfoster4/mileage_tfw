@@ -26,8 +26,8 @@ class Entry(models.Model):
     pub_date = models.DateField('Last modified')
     destination = models.CharField(max_length=500, blank=True)
     notes = models.CharField(max_length=500, blank=True)
-    odo_start = models.IntegerField(blank=True)
-    odo_end = models.IntegerField(blank=True)
+    odo_start = models.IntegerField(default=0)
+    odo_end = models.IntegerField(default=0)
     pay_period_start = models.DateField('Week start')
     pay_period_end = models.DateField('Week end')
     draft = models.BooleanField(default=True)
@@ -56,15 +56,20 @@ class Entry(models.Model):
     
 
 
-    def amount_reimbursed(self):
-        rate = preferences.CoreAppSettings.reimbursement_rate #pylint: disable=no-member
+    def amount_reimbursed(self, rate=None):
+        if rate is None: # preferences gets screwy when running tests
+            if preferences.CoreAppSettings.reimbursement_rate:
+                rate = preferences.CoreAppSettings.reimbursement_rate
+            else:
+                rate = 0.53
+
         total = rate * self.miles_driven()
+        print()
         return Decimal('{:.2f}'.format(round(total,2)))
     
 
     def get_start_of_pay_period_date(self, date=None):
         if date is None: date = self.pub_date
-             
         one_week = timedelta(days=7)
 
         if date.weekday() >= self.start_of_pay_period: # friday, saturday and sunday
