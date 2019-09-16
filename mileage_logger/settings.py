@@ -53,8 +53,9 @@ STATIC_URL = '/static/'
 SPREADSHEET_NAME = 'spreadsheet_template.xlsx'
 
 AUTH_USER_MODEL = 'users.CustomUser' # new
+LOGIN_URL = '/users/login' # new
 LOGIN_REDIRECT_URL = '/app' # new
-LOGOUT_REDIRECT_URL = 'home' # new
+LOGOUT_REDIRECT_URL = '/home' # new
 
 SITE_ID = 2 # new
 

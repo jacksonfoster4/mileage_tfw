@@ -18,9 +18,10 @@ from django.urls import path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
 from core.views import index as app_index
-
+from .views import home
 urlpatterns = [
-    path('', app_index, name='index'),
+    path('', home, name='home'),
+    path('home', home, name='home'),
     path('app/', include('core.urls')),
     path('users/', include('users.urls')),
     path('users/', include('django.contrib.auth.urls')),

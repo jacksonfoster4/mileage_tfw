@@ -5,18 +5,20 @@ from .forms import EntryForm
 from preferences import preferences
 from core.utils import Spreadsheet
 from datetime import date, timedelta
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+@login_required
 def index(request):
     entries = Entry.current_entries(request.user)
     drafts = list(filter(lambda x: x.draft == True, entries))
     current_entry_list = list(filter(lambda x: x.draft == False, entries))
     miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
-    reimbursement_this_period = miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate # pylint: disable=no-member
+    reimbursement_this_period = round(miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate, 2) # pylint: disable=no-member
     return render(request, 'core/index.html', {'current_entry_list': current_entry_list, 'drafts': drafts, 'miles_driven_this_period': miles_driven_this_period, 'reimbursement_this_period': reimbursement_this_period})
 
 
-
+@login_required
 def list_entries(request):
     entries = list(Entry.objects.filter(user=request.user))
     entries.reverse()
@@ -33,7 +35,7 @@ def list_entries(request):
     return render(request, 'core/list.html', {'pay_periods': pay_periods})
     
 
-
+@login_required
 def new(request):
     if request.method == 'POST':
         form = EntryForm(request.POST)
@@ -47,13 +49,13 @@ def new(request):
         return render(request, 'core/new.html', {'form': form})
 
 
-
+@login_required
 def detail(request, id):
     entry = Entry.objects.get(id=id)
     return render(request, 'core/detail.html', {'entry': entry})
  
 
-
+@login_required
 def edit(request, id):
     entry = Entry.objects.get(id=id)
     warning = None
@@ -74,11 +76,12 @@ def edit(request, id):
         return render(request, 'core/edit.html', {'form': form, 'entry': entry, 'warning': warning})
 
 
-
+@login_required
 def delete(request, id):
     Entry.objects.filter(id=id).delete()
     return redirect('core:index')
-
+    
+@login_required
 def view_sheet(request, id):
     entry = Entry.objects.get(id=id)
     entries = Entry.current_entries(request.user, entry.pub_date)

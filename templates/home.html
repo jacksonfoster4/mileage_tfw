@@ -3,8 +3,9 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+<h1> Welcome! Please login or signup to begin tracking your miles.</h1>
 {% if user.is_authenticated %}
-  Hi {{ user.username }}!
+  <p><a href="{% url 'core:index' %}">View App</a></p>
   <p><a href="{% url 'logout' %}">logout</a></p>
 {% else %}
   <p>You are not logged in</p>

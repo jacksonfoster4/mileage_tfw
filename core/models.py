@@ -64,7 +64,6 @@ class Entry(models.Model):
                 rate = 0.53
 
         total = rate * self.miles_driven()
-        print()
         return Decimal('{:.2f}'.format(round(total,2)))
     
 
