@@ -142,7 +142,7 @@ class Spreadsheet():
         receiver_email = preferences.CoreAppSettings.spreadsheet_email # pylint: disable=no-member
 
         message = MIMEMultipart("alternative")
-        message["Subject"] = "multipart test"
+        message["Subject"] = "Mileage Log"
         message["From"] = sender_email
         message["To"] = receiver_email
 

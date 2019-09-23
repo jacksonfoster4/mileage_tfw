@@ -11,11 +11,19 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def index(request):
     entries = Entry.current_entries(request.user)
+    all_entries = list(Entry.objects.filter(user=request.user, draft=False))
     drafts = list(filter(lambda x: x.draft == True, entries))
     current_entry_list = list(filter(lambda x: x.draft == False, entries))
     miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
     reimbursement_this_period = round(miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate, 2) # pylint: disable=no-member
-    return render(request, 'core/index.html', {'current_entry_list': current_entry_list, 'drafts': drafts, 'miles_driven_this_period': miles_driven_this_period, 'reimbursement_this_period': reimbursement_this_period})
+    return render(request, 'core/index.html', {'current_entries': zip(current_entry_list, list(map(lambda x: EntryForm(instance=x), current_entry_list))),
+                                                'drafts': zip(drafts, list(map(lambda x: EntryForm(instance=x), drafts))), 
+                                                'miles_driven_this_period': miles_driven_this_period, 
+                                                'reimbursement_this_period': reimbursement_this_period,
+                                                'form': EntryForm(),
+                                                'total_reimbursement': sum(map(lambda x: x.amount_reimbursed(), all_entries)),
+                                                'total_miles_driven': sum(map(lambda x: x.miles_driven(), all_entries)),
+                                                })
 
 
 @login_required
@@ -80,7 +88,7 @@ def edit(request, id):
 def delete(request, id):
     Entry.objects.filter(id=id).delete()
     return redirect('core:index')
-    
+
 @login_required
 def view_sheet(request, id):
     entry = Entry.objects.get(id=id)

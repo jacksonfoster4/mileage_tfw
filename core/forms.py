@@ -17,8 +17,11 @@ class EntryForm(ModelForm):
         
         if 'save' in request.POST:
             obj.draft = False
-        if 'save_as_draft' in request.POST:
+        elif 'save_as_draft' in request.POST:
             obj.draft = True
+        elif 'delete' in request.POST: # i don't like how this was done
+            obj.delete()
+            return
 
         if commit:
             obj.save()
