@@ -1,13 +1,27 @@
-{% extends 'base.html' %}
+{% extends 'core/base.html' %}
 
 {% block title %}Login{% endblock %}
-
 {% block content %}
-<h2>Login</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit">Login</button><br>
-  <a href="{% url 'password_reset' %}">Forgot Password?</a>
-</form>
+<div id='login-container' class="container">
+  <div id='login-row' class="w-100 row">
+    <div id='login-col'class="col-md-12">
+      <h3 id='login-header'>Login</h3>
+      <form id='login-form'method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button id='login-button' class="btn btn-primary" type="submit">Login</button><br>
+          <div class="container">
+            <div class='row'>
+              <div class="col-md-6">
+                  <a class="badge p-2 badge-info" href="{% url 'password_reset' %}">Forgot Password?</a>
+              </div>
+              <div class="col-md-6">
+                <a class="badge p-2 badge-light" href="{% url 'users:signup' %}">Sign Up</a>
+              </div>
+          </div>
+          
+        </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

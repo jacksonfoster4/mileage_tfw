@@ -1,6 +1,8 @@
 # TODO
-* tests
 * refactor email templates
-* add login_required functionality
-* finish front end
+* finish view sheet
+* add footer
+* finish view all entries list
+* login and sign up pages
+* forgot password pages
 * deploy

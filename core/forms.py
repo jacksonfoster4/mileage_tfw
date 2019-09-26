@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from .models import Entry
 from preferences import preferences
-from datetime import datetime
+from django.utils import timezone
 
 class EntryForm(ModelForm):
     class Meta:
@@ -11,7 +11,7 @@ class EntryForm(ModelForm):
     def save(self, request, commit=True):
         obj = super().save(commit=False)
         obj.user = request.user
-        obj.pub_date = datetime.today()
+        obj.pub_date = timezone.now()
         obj.pay_period_start = obj.get_start_of_pay_period_date()
         obj.pay_period_end = obj.get_end_of_pay_period_date()
         
@@ -19,9 +19,6 @@ class EntryForm(ModelForm):
             obj.draft = False
         elif 'save_as_draft' in request.POST:
             obj.draft = True
-        elif 'delete' in request.POST: # i don't like how this was done
-            obj.delete()
-            return
 
         if commit:
             obj.save()

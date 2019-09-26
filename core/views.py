@@ -4,25 +4,34 @@ from .models import Entry
 from .forms import EntryForm
 from preferences import preferences
 from core.utils import Spreadsheet
-from datetime import date, timedelta
+from datetime import timedelta
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 
-# Create your views here.
 @login_required
 def index(request):
     entries = Entry.current_entries(request.user)
     all_entries = list(Entry.objects.filter(user=request.user, draft=False))
+
     drafts = list(filter(lambda x: x.draft == True, entries))
+    drafts.reverse()
+    current_drafts = list(zip(drafts, list(map(lambda x: EntryForm(instance=x), drafts))))
+    
     current_entry_list = list(filter(lambda x: x.draft == False, entries))
+    current_entry_list.reverse()
+    current_entries = list(zip(current_entry_list, list(map(lambda x: EntryForm(instance=x), current_entry_list))))
+
     miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
     reimbursement_this_period = round(miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate, 2) # pylint: disable=no-member
-    return render(request, 'core/index.html', {'current_entries': zip(current_entry_list, list(map(lambda x: EntryForm(instance=x), current_entry_list))),
-                                                'drafts': zip(drafts, list(map(lambda x: EntryForm(instance=x), drafts))), 
+    return render(request, 'core/index.html', {'current_entries': current_entries,
+                                                'current_drafts': current_drafts, 
                                                 'miles_driven_this_period': miles_driven_this_period, 
                                                 'reimbursement_this_period': reimbursement_this_period,
                                                 'form': EntryForm(),
                                                 'total_reimbursement': sum(map(lambda x: x.amount_reimbursed(), all_entries)),
                                                 'total_miles_driven': sum(map(lambda x: x.miles_driven(), all_entries)),
+                                                'start_of_this_pay_period': Entry().get_start_of_pay_period_date().strftime("%b %d %Y"),
+                                                'end_of_this_pay_period': Entry().get_end_of_pay_period_date().strftime("%b %d %Y")
                                                 })
 
 
@@ -40,6 +49,11 @@ def list_entries(request):
                 dict[date] = [entry]
     for d in dict.keys():
         pay_periods.append({'start_date': d, 'end_date': d + timedelta(days=6), 'entries': dict[d]})
+    for period in pay_periods:
+        forms = []
+        for entry in period['entries']:
+            forms.append(EntryForm(instance=entry))
+        period['entries'] = zip(period['entries'], forms)
     return render(request, 'core/list.html', {'pay_periods': pay_periods})
     
 
@@ -66,8 +80,10 @@ def detail(request, id):
 @login_required
 def edit(request, id):
     entry = Entry.objects.get(id=id)
+    if not entry:
+        redirect('core:app')
     warning = None
-    if entry.pub_date < entry.get_start_of_pay_period_date(date=date.today()):
+    if entry.pub_date < entry.get_start_of_pay_period_date(date=timezone.now().date()):
         warning = "This entry will be moved to the current pay period. Are you sure you want to continue?"
 
     if request.method == 'POST':
@@ -97,5 +113,6 @@ def view_sheet(request, id):
     keys = []
     for key in sheet['entries'][0].keys():
             keys.append(key.title().replace("_", " "))
+    print(sheet)
     return render(request, 'core/sheet.html', {'keys': keys,'sheet': sheet, 'pay_period_start': entry.pay_period_start, 'pay_period_end': entry.pay_period_end})
     
