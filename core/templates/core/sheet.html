@@ -1,15 +1,9 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="container">
-        <div class="row pt-4">
-            <div class="col-md-12">
-                <a class="btn btn-primary" href='{% url "core:index" %}'>Home</a>
-            </div>
-        </div>
-    </div>
-<h1>{{ pay_period_start }} - {{ pay_period_end }}</h1>
-<table class="table">
+<div style="overflow: scroll" class="container">
+<h1 class="sheet-pay-period">{{ pay_period_start }} - {{ pay_period_end }}</h1>
+<table style="overflow-x: scroll"class="table">
         <thead>
           <tr>
             <th scope="col">Entry Date</th>
@@ -41,4 +35,6 @@
           </tr>
         </tbody>
       </table>
+    </div>
+
 {% endblock %}

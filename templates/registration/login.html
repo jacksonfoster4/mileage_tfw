@@ -1,27 +1,31 @@
-{% extends 'core/base.html' %}
+{% extends 'base.html' %}
 
 {% block title %}Login{% endblock %}
 {% block content %}
-<div id='login-container' class="container">
-  <div id='login-row' class="w-100 row">
-    <div id='login-col'class="col-md-12">
-      <h3 id='login-header'>Login</h3>
-      <form id='login-form'method="post">
-          {% csrf_token %}
-          {{ form.as_p }}
-          <button id='login-button' class="btn btn-primary" type="submit">Login</button><br>
-          <div class="container">
-            <div class='row'>
-              <div class="col-md-6">
-                  <a class="badge p-2 badge-info" href="{% url 'password_reset' %}">Forgot Password?</a>
-              </div>
-              <div class="col-md-6">
-                <a class="badge p-2 badge-light" href="{% url 'users:signup' %}">Sign Up</a>
-              </div>
-          </div>
-          
-        </form>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'registration/css/registration.css' %}">
+
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+      <!-- Tabs Titles -->
+  
+      <!-- Icon -->
+      <div class="fadeIn first">
+        <img src="{% static 'registration/logo.png' %}" id="tfw-icon" alt="User Icon" />
+      </div>
+  
+      <!-- Login Form -->
+      <form action='{% url "login" %}' method="POST">
+        {% csrf_token %}
+        <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username">
+        <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password">
+        <input type="submit" class="fadeIn fourth" value="Log In">
+      </form>
+      <!-- Remind Passowrd -->
+      <div id="formFooter">
+        <a class="underlineHover" href="{% url 'password_reset' %}">Forgot Password?</a>
+      </div>
+  
     </div>
   </div>
-</div>
 {% endblock %}

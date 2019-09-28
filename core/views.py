@@ -20,14 +20,14 @@ def index(request):
     current_entry_list = list(filter(lambda x: x.draft == False, entries))
     current_entry_list.reverse()
     current_entries = list(zip(current_entry_list, list(map(lambda x: EntryForm(instance=x), current_entry_list))))
-
+    
     miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
     reimbursement_this_period = round(miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate, 2) # pylint: disable=no-member
     return render(request, 'core/index.html', {'current_entries': current_entries,
                                                 'current_drafts': current_drafts, 
                                                 'miles_driven_this_period': miles_driven_this_period, 
                                                 'reimbursement_this_period': reimbursement_this_period,
-                                                'form': EntryForm(),
+                                                'form': EntryForm(initial={'odo_start': None, 'odo_end': None}),
                                                 'total_reimbursement': sum(map(lambda x: x.amount_reimbursed(), all_entries)),
                                                 'total_miles_driven': sum(map(lambda x: x.miles_driven(), all_entries)),
                                                 'start_of_this_pay_period': Entry().get_start_of_pay_period_date().strftime("%b %d %Y"),
@@ -65,7 +65,7 @@ def new(request):
             form.save(request)
             return redirect('core:index')
         else:
-            return render(request, 'core/new.html', {'form': form })
+            return render(request, 'core/new.html', {'form': form})
     else:
         form = EntryForm()
         return render(request, 'core/new.html', {'form': form})

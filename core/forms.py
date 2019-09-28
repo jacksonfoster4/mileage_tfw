@@ -2,11 +2,15 @@ from django.forms import ModelForm
 from .models import Entry
 from preferences import preferences
 from django.utils import timezone
+from django import forms
 
 class EntryForm(ModelForm):
     class Meta:
         model = Entry
         fields = ['entry_date', 'destination', 'notes', 'odo_start', 'odo_end']
+        widgets = {
+            'entry_date': forms.DateTimeInput(attrs={'placeholder': 'M/D/YYYY'}, format="%m/%d/%y"),
+        }
     
     def save(self, request, commit=True):
         obj = super().save(commit=False)

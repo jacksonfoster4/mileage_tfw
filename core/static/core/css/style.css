@@ -1,7 +1,11 @@
-/* @import url('https://fonts.googleapis.com/css?family=Karla&display=swap'); */
+@import url('https://fonts.googleapis.com/css?family=Karla&display=swap');
 
 body {
     font-family: 'Karla', sans-serif;
+    height: 110vh
+}
+main {
+    height: 110vh;
 }
 #title {
     font-size: 2rem
@@ -24,9 +28,6 @@ body {
     left: 1rem;
 }
 @media (max-width: 440px) {
-    .view-sheet {
-        
-    }
     .modal .btn {
         font-size: .75rem
     }
@@ -44,14 +45,13 @@ body {
     border-top: 1px solid #cacaca;
     border-radius: 5px 5px 0px 0px ;
 }
-.entry:last-child {
+.entry:nth-last-of-type(2) {
     border-radius: 0px 0px 5px 5px ;
 }
 .entry-reimbursement {
     text-align: center;
 }
 .entry-reimbursement-text {
-    position: absolute;
     top: 50%;
     transform: translateY(-50%);
     font-size: 1.5rem
@@ -68,11 +68,12 @@ body {
     padding-left: 10px
 }
 #main-heading-container {
-    padding-top: 2rem;
+    padding-top: 1rem;
     border-radius: 0 0px 8px 8px ;
     box-shadow: 0px -7px 8px 10px rgba(0,0,0,0.37);
-    position: sticky;
-    top: 0;
+    position: sticky !important;
+    position:-webkit-sticky !important;
+    top: 0rem;
     z-index: 100
 }
 #main-heading-text-container {
@@ -133,6 +134,7 @@ button {
     border-radius: 5px 5px 5px 5px;
     padding-top: 1rem;
     padding-bottom: 1rem;
+    margin-bottom:1rem;
 }
 
 /* LOGIN */
@@ -153,4 +155,54 @@ button {
 }
 #forgot-password {
     display: inline-block;
+}
+.navbar-fixed-top {
+    border-radius: 0px 0px 5px 5px;
+    box-shadow: 0px -9px 8px 10px rgba(0,0,0,0.37);
+}
+.navbar-brand-white {
+    color: white !important;
+    font-size: 20px;
+}
+.white-toggler .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgb(255,255,255)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 8h24M4 16h24M4 24h24'/%3E%3C/svg%3E");
+}
+.white-toggler.navbar-toggler {
+    border-color: rgb(255,255,255) !important;
+} 
+.navbar-nav a {
+    color: white !important
+}
+.navbar-collapse {
+    float:right
+}
+@media (max-width: 991px) {
+    .navbar-nav {
+        text-align: center
+    }
+}
+
+#logout-footer {
+    position: absolute
+    padding-bottom: -10vh;
+    color: #da575c; 
+    padding-bottom: 2rem
+}
+#logout-footer:hover {
+    color: #c24247; 
+}
+.todays-date, .todays-date:focus {
+    background-color: #c24247; 
+    display: inline
+}
+.sheet-pay-period {
+    padding-top: 2rem
+}
+@media (max-width: 992px){
+    .sheet-pay-period {
+        font-size: 1.5rem;
+    }
+}
+#current-entries-container {
+    padding-bottom: 3rem
 }

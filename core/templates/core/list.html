@@ -2,14 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <div class="row pt-4">
-        <div class="col-md-12">
-            <a class="btn btn-primary" href='{% url "core:index" %}'>Home</a>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row px-3">
+    <div class="row py-4 px-3">
             {% if pay_periods %}
             <div class="col-md-12">
                 <div class="list-group">
@@ -18,7 +11,7 @@
                     {% for entry, form in pay_period.entries %}
                         <div id="entry_row_{{entry.id}}" data-toggle="modal" class="row list-entry" data-target="#entry_{{entry.id}}">
                                 <div class='totals-number col-6'>
-                                    {{ entry.destination }} <div class='badge ml-2 miles-badge badge-red'>{{ entry.miles_driven }} miles</div>
+                                    {{ entry.destination }} <div class='badge miles-badge badge-red'>{{ entry.miles_driven }} miles</div>
                                     <br>
                                     <div class='totals-title'>{{ entry.entry_date }}</div>
                                 </div>
@@ -60,7 +53,8 @@
                                         </form>
                                             </div>
                                     </div>
-                                    </div>
+                                </div>
+                            </div>
                     {% endfor %}
                 {% endfor %}
                 </div>
