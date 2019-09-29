@@ -4,4 +4,3 @@ dump.rdb
 .env
 .vscode
 *.pyc
-.gitignore
