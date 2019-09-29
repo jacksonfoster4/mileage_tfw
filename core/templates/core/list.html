@@ -1,31 +1,67 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="row">
-        {% if pay_periods %}
-        <div class="col-md-12">
-            <div class="list-group">
-                {% for pay_period in pay_periods %}
-                <p class="lead mt-3">{{ pay_period.start_date }} -- {{ pay_period.end_date }}</p>
-                {% for entry in pay_period.entries %}
-                    <a href="{% url 'core:detail' entry.id %}" class="list-group-item list-group-item-action">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">{{ entry.destination }}</h5>
-                            <small>{{ entry.miles_driven }} miles</small>
-                        </div>
-                    </a>
-                    <div class="cold-md-2 mt-1 mb-4">
-                        <div class="btn-group" role="group" aria-label="Basic example">
-                            <a class="btn btn-primary" href="{% url 'core:edit' entry.id %}">Edit</a>
-                            <a class="btn btn-danger" href="{% url 'core:delete' entry.id %}">Delete</a>
-                        </div>
-                    </div>
+<div class="container">
+    <div class="row py-4 px-3">
+            {% if pay_periods %}
+            <div class="col-md-12">
+                <div class="list-group">
+                    {% for pay_period in pay_periods %}
+                    <p class="lead mt-3">{{ pay_period.start_date }} -- {{ pay_period.end_date }}</p>
+                    {% for entry, form in pay_period.entries %}
+                        <div id="entry_row_{{entry.id}}" data-toggle="modal" class="row list-entry" data-target="#entry_{{entry.id}}">
+                                <div class='totals-number col-6'>
+                                    {{ entry.destination }} <div class='badge miles-badge badge-red'>{{ entry.miles_driven }} miles</div>
+                                    <br>
+                                    <div class='totals-title'>{{ entry.entry_date }}</div>
+                                </div>
+                                <div class="entry-reimbursement col-6">
+                                    <span class='entry-reimbursement-text'>${{ entry.amount_reimbursed }}</span>
+                                </div>
+                            </div>
+                            <div class="modal fade" id="entry_{{ entry.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Edit Entry</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                        <form id='form_{{entry.id}}'action='{% url "core:edit" id=entry.id %}' method="POST">
+                                            <script>
+                                                function postToDelete() {
+                                                    $.ajax({
+                                                            url: '{% url "core:delete" id=entry.id %}',
+                                                            type: "POST",
+                                                            data: {csrfmiddlewaretoken: '{{csrf_token}}' },
+                                                            success: location.reload()
+                                                    })
+                                                };
+                                            </script>
+                                            <div class="modal-body">
+                                                {{ form.errors }}
+                                                {% csrf_token %}
+                                                {{ form.as_p }}
+                                            </div>
+                                            <div class="modal-footer">
+                                            <button onclick='postToDelete()' type='button'name="delete" class="btn btn-danger view-sheet">Delete</button>
+                                            <button style="overflow: visible !important; height: 0 !important; width: 0 !important; margin: 0 !important; border: 0 !important; padding: 0 !important; display: block !important;" type="submit" name="save"></button>
+                                            <a href="{% url 'core:sheet' id=entry.id %}" class="btn btn-success">View Sheet</a>
+                                            <button type="submit"name="save_as_draft" class="btn btn-warning">Save as Draft</button>
+                                            <button type="submit" name="save" class="btn btn-primary">Save</button>
+                                        </form>
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+                </div>
+            {% else %}
+                <p>No entries are available.</p>
             </div>
-        {% else %}
-            <p>No entries are available.</p>
-        </div>
-        {% endif %}
-</div>      
+            {% endif %}
+    </div>   
+</div>
 {% endblock %}

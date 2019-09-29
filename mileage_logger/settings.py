@@ -27,7 +27,7 @@ SECRET_KEY = 'jr7tn(_nu!q!1@1dcuuqw=)%%e82c&v#9&i1c4r^pvhs61jjak'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.1.138', 'localhost']
 
 
 # Application definition
@@ -43,20 +43,22 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig', # new
     'core.apps.CoreConfig', # new
     'preferences', # new
-    'django_extensions' # new
+    'django_extensions', # new
 
 ]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 SPREADSHEET_NAME = 'spreadsheet_template.xlsx'
 
 AUTH_USER_MODEL = 'users.CustomUser' # new
-LOGIN_URL = '/users/login' # new
+LOGIN_URL = '/login' # new
 LOGIN_REDIRECT_URL = '/app' # new
-LOGOUT_REDIRECT_URL = '/home' # new
-
+LOGOUT_REDIRECT_URL = '/login' # new
 SITE_ID = 2 # new
 
 BROKER_URL = 'redis://localhost:6379'
@@ -98,6 +100,9 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+            ],
+            'builtins': [
+                'django.contrib.staticfiles.templatetags.staticfiles',
             ],
         },
     },

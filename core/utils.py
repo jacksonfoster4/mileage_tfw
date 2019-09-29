@@ -142,7 +142,7 @@ class Spreadsheet():
         receiver_email = preferences.CoreAppSettings.spreadsheet_email # pylint: disable=no-member
 
         message = MIMEMultipart("alternative")
-        message["Subject"] = "multipart test"
+        message["Subject"] = "Mileage Log"
         message["From"] = sender_email
         message["To"] = receiver_email
 
@@ -217,18 +217,20 @@ class Spreadsheet():
             self.wb.active[k[0]] = k[1]
 
             
-        #reset spreadsheet. colors get messed up for some reason. might be from BytesIO -> .xlsx
+        #reset spreadsheet
         for i, row in enumerate(self.wb.active.rows,1):
             for cell in self.wb.active[i]:
                 cell.alignment = Alignment(horizontal='center')
-                cell.fill = PatternFill(bgColor="ffffff", fill_type = "solid")
+                cell.fill = PatternFill(fgColor="ffffff", fill_type = "solid")
                 cell.font = Font(name='Arial', color="000000", size=14)
                 cell.border = Border(
                                 left=Side(border_style='thin', color='ffffff'),
                                 right=Side(border_style='thin', color='ffffff'),
                                 top=Side(border_style='thin', color='ffffff'),
                                 bottom=Side(border_style='thin', color='ffffff')
-                            ) 
+                            )
+        
+        
 
         for i, row in enumerate(self.wb.active.rows,7): # format entries
             if i == len(self.entries)+1: break

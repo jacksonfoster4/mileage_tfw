@@ -18,14 +18,16 @@ from django.urls import path, include
 from django.views.generic.base import TemplateView
 from django.contrib.auth import views as auth_views
 from core.views import index as app_index
-from .views import home
+from django.urls import reverse_lazy
+from django.views.generic import RedirectView
+
 urlpatterns = [
-    path('', home, name='home'),
-    path('home', home, name='home'),
+    path('', RedirectView.as_view(url=reverse_lazy('core:index'), permanent=False)),
     path('app/', include('core.urls')),
     path('users/', include('users.urls')),
     path('users/', include('django.contrib.auth.urls')),
     path('admin/', admin.site.urls),
+    path('login/', auth_views.LoginView.as_view(),name='login'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
     path('reset/(<uidb64>[0-9A-Za-z_\-]+)/(<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/',

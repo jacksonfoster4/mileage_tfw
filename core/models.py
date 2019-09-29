@@ -1,9 +1,10 @@
 from django.db import models
 from datetime import datetime, timedelta
+from django.utils import timezone
 from django.conf import settings
 from django.contrib.staticfiles import finders 
 from decimal import Decimal
-
+import math
 from users.models import CustomUser
 
 from openpyxl import load_workbook
@@ -15,8 +16,8 @@ from preferences import preferences
 class CoreAppSettings(Preferences):
     class Meta:
         verbose_name_plural = "core app settings"
-    reimbursement_rate = models.FloatField(null=True, blank=True)
-    spreadsheet_email = models.CharField(max_length=255, blank=True, null=True)
+    reimbursement_rate = models.FloatField(default=0.53)
+    spreadsheet_email = models.CharField(max_length=255, default='jacksonfoster444@gmail.com')
 
 
 class Entry(models.Model):
@@ -26,8 +27,8 @@ class Entry(models.Model):
     pub_date = models.DateField('Last modified')
     destination = models.CharField(max_length=500, blank=True)
     notes = models.CharField(max_length=500, blank=True)
-    odo_start = models.IntegerField(default=0)
-    odo_end = models.IntegerField(default=0)
+    odo_start = models.FloatField(default=0)
+    odo_end = models.FloatField(default=0)
     pay_period_start = models.DateField('Week start')
     pay_period_end = models.DateField('Week end')
     draft = models.BooleanField(default=True)
@@ -41,7 +42,7 @@ class Entry(models.Model):
     
 
     @staticmethod
-    def current_entries(user, date=datetime.today()):
+    def current_entries(user, date=timezone.now().date()):
         current_entries = Entry.objects.filter(
             user=user, 
             pub_date__gte=Entry().get_start_of_pay_period_date(date=date), # current pay period
@@ -52,7 +53,7 @@ class Entry(models.Model):
 
 
     def miles_driven(self):
-        return self.odo_end - self.odo_start
+        return math.ceil(self.odo_end - self.odo_start)
     
 
 
@@ -68,7 +69,11 @@ class Entry(models.Model):
     
 
     def get_start_of_pay_period_date(self, date=None):
-        if date is None: date = self.pub_date
+        if date is None and self.pub_date: 
+            date = self.pub_date
+        else:
+            date = timezone.now().date()
+
         one_week = timedelta(days=7)
 
         if date.weekday() >= self.start_of_pay_period: # friday, saturday and sunday
@@ -83,7 +88,10 @@ class Entry(models.Model):
 
 
     def get_end_of_pay_period_date(self, date=None):
-        if date is None: date = self.pub_date
+        if date is None and self.pub_date: 
+            date = self.pub_date
+        else:
+            date = timezone.now().date()
 
         one_week = timedelta(days=7)
 

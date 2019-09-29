@@ -1,47 +1,254 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-12">
-            <h1 class="display-4"><h2>You've driven a total of {{request.user.total_miles_driven }} miles. That equals ${{ request.user.total_amount_reimbursed }}!</h2></h1>
-            {% if miles_driven_this_period %}
-                <p class="lead">You've driven a total of {{ miles_driven_this_period }} miles during this pay period. That equals ${{ reimbursement_this_period }}!</p>
-            {% endif %}
-            <hr class="my-4">
+<script>
+        function getVars() {
+            var vars = {};
+            var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                vars[key] = value;
+            });
+            return vars;
+        }
+        window.onload = function triggerNewModal(){
+            if (getVars()["new"] == "1") {
+                $('#new').modal('show');
+                window.history.replaceState({}, document.title, "/app");
+            }
+        }
+      </script>
+<div id="main-heading-container" style="position: sticky"class="background container-fluid w-100">
+    <div class="row flex-md-row flex-column-reverse">
+        <div class="col-md-8">
+            <h4 id='title'>My Current Mileage</h4>
+            <h5 class='pay-period pb-4'>{{start_of_this_pay_period }} - {{end_of_this_pay_period}}</h5>
+            <h1 id='amount-reimbursed'>${{ reimbursement_this_period }}</h1><h5 id='amount-reimbursed-subtext'>{{ miles_driven_this_period }} miles</h5><br>
         </div>
-        <div class="col-md-12">
-            {% if drafts %}
-                <h5>Drafts</h5>
-            {% for entry in drafts %}
-                <div class="card" style="width: 18rem;">
-                    <div class="card-body">
-                        <a class="card-title display" href="{% url 'core:detail' entry.id %}"><h5>{{ entry.destination }}</h5></a>
-                        <h6 class="card-subtitle mb-2 text-muted">{{ entry.miles_driven }} miles</h6>
-                        <p class="card-text">{{ entry.notes }}</p>
+    </div>
+</div>
+<div class="pt-2 container">
+        <div class="row w-100 mx-1 pt-4 px-3" id="main-heading-text-container">
+                <div class="totals border-round-top col-12">
+                    <div class="row">
+                            <div class="totals-img-container col-2"><img class='totals-img'src='{% static "core/map.svg" %}'></div>
+                            <div class="col-10">
+                                <div style='display:inline-block'class='totals-title'>Total Miles Driven</div>
+                                <div class='totals-number'>{{ total_miles_driven }} miles</div>
+                            </div>
                     </div>
                 </div>
-            {% endfor %}
-            {% endif %}
+            </div>
+</div>
+<div class="container">
+        <div class="row w-100 mx-1 px-3" id="main-heading-text-container">
+                <div class="totals border-round-bottom col-12">
+                    <div class="row">
+                            <div class="totals-img-container col-2"><img class='totals-img'src='{% static "core/dollar.svg" %}'></div>
+                            <div class="col-10">
+                                <div style='display:inline-block'class='totals-title'>Total Reimbursement</div>
+                                <div class='totals-number'>${{ total_reimbursement }}</div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+</div>
 
-            {% if current_entry_list %}
-                <div class="list-group">
-                <h3>Current Entries</h3>
-                {% for entry in current_entry_list %}
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <a class="card-title display" href="{% url 'core:detail' entry.id %}"><h5>{{ entry.destination }}</h5></a>
-                            <h6 class="card-subtitle mb-2 text-muted">{{ entry.miles_driven }} miles</h6>
-                            <p class="card-text">{{ entry.notes }}</p>
+<div class="container">
+        <div class="row my-3 px-4">
+                <button data-toggle="modal" data-target="#new" class="col-md-12 text-center p-4 dashed-border">
+                    <div >
+                        +  New Entry
+                    </div>
+                </button>
+            </div>
+</div>
+<!-- Button trigger modal -->
+      <!-- Modal -->
+      <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">New Entry</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <form action='{% url "core:new" %}' method="POST">
+                    <div class="modal-body" id="new">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                    </div>
+                    <div class="modal-footer">
+                    <button type="submit"name="save_as_draft" class="btn btn-secondary">Save as Draft</button>
+                    <button type="submit" name="save" class="btn btn-primary">Save</button>
+                    </div>
+                </form>
+                <script>
+                    $("#new #id_entry_date").after('<button type="button" onclick=todaysDateNew() class="btn btn-danger todays-date">Today</button>')
+                    function todaysDateNew(){
+                        var today = new Date();
+                        var dd = String(today.getDate()).padStart(2, '0');
+                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                        var yyyy = today.getFullYear();
+
+                        today = mm + '/' + dd + '/' + yyyy;
+                        
+                        $("#new #id_entry_date").val(today)
+
+                    }
+                </script>
+              </div>
+            </div>
+          </div>
+    {% if current_drafts|length%}
+        <div class="container">
+            <div class="row pb-2 px-2">
+                <div class="col-12">
+                    <h3 style='position: relative; top: 50%; transform: translateY(-50%);'>Drafts</h3>
+                </div>
+            </div>
+        </div>
+        <div id='draft-entries-container'class="container">
+            {% for entry, form in current_drafts %}
+                <div id="draft_entry_row_{{entry.id}}" data-toggle="modal" class="row mx-1 entry" data-target="#draft_entry_{{entry.id}}">
+                    <div class='totals-number col-6'>
+                        {{ entry.destination }} <div class='badge miles-badge badge-red'>{{ entry.miles_driven }} miles</div><div class='badge miles-badge badge-warning'>DRAFT</div>
+                        <br>
+                        <div class='totals-title'>{{ entry.entry_date }}</div>
+                    </div>
+                    <div class="entry-reimbursement col-6">
+                        <span class='entry-reimbursement-text'>${{ entry.amount_reimbursed }}</span>
+                    </div>
+                </div>
+                <div class="modal fade" id="draft_entry_{{ entry.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Edit Entry</h5><div class='badge ml-2 my-2 miles-badge badge-warning'>DRAFT</div>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <form id='draft_form_{{entry.id}}'action='{% url "core:edit" id=entry.id %}' method="POST">
+                                <script>
+                                    function postToDelete() {
+                                        $.ajax({
+                                                url: '{% url "core:delete" id=entry.id %}',
+                                                type: "POST",
+                                                data: {csrfmiddlewaretoken: '{{csrf_token}}' },
+                                                success: window.location.href = '{% url "core:index" %}'
+                                        })
+                                    };
+                                </script>
+                                <div class="modal-body">
+                                    {{ form.errors }}
+                                    {% csrf_token %}
+                                    {{ form.as_p }}
+                                </div>
+                                <div class="modal-footer">
+                                <button onclick='postToDelete()' type='button'name="delete" class="btn btn-danger view-sheet">Delete</button>
+                                <button style="overflow: visible !important; height: 0 !important; width: 0 !important; margin: 0 !important; border: 0 !important; padding: 0 !important; display: block !important;" type="submit" name="save"></button>
+                                <a href="{% url 'core:sheet' id=entry.id %}" class="btn btn-success">View Sheet</a>
+                                <button type="submit"name="save_as_draft" class="btn btn-warning">Save as Draft</button>
+                                <button type="submit" name="save" class="btn btn-primary">Save</button>
+                            </form>
+                                </div>
+                          </div>
                         </div>
                     </div>
-                {% endfor %}
+            {% endfor %}
                 </div>
-                {% else %}
-                <p>No entries are available.</p>
-            {% endif %}
-            <br><br><a href="{% url 'core:new'%}"><button class="btn btn-primary">New Entry</button></a><br><br>
+            </div>
+        {% endif %}
+        <div class="container">
+                <div class="row pb-2 px-2">
+                        <div class="col-8">
+                            <h3 style='position: relative; top: 50%; transform: translateY(-50%);'>Current Entries</h3>
+                        </div>
+                        <div class="col-4 p-0 text-center">
+                            <a style='position: relative; top: 40%; transform: translateY(-40%);' class="badge badge-red"href="{% url 'core:list' %}">View All Entries</a>
+                        </div>
+                    </div>
+        </div>
+        
+        
 
-            <a href="{% url 'core:list' %}">See all entries</a>
-        </div>        
+        {% if current_entries|length %}
+            <div id='current-entries-container'class="container">
+                {% for entry, form in current_entries %}
+                    <div id="entry_row_{{entry.id}}" data-toggle="modal" class="row mx-1 entry" data-target="#entry_{{entry.id}}">
+                            <div class='totals-number col-6'>
+                                {{ entry.destination }} <div class='badge miles-badge badge-red'>{{ entry.miles_driven }} miles</div>
+                                <br>
+                                <div class='totals-title'>{{ entry.entry_date }}</div>
+                            </div>
+                            <div class="entry-reimbursement col-6">
+                                <span class='entry-reimbursement-text'>${{ entry.amount_reimbursed }}</span>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="entry_{{ entry.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" role="document">
+                                  <div class="modal-content">
+                                    <div class="modal-header">
+                                      <h5 class="modal-title" id="exampleModalLabel">Edit Entry</h5>
+                                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                      </button>
+                                    </div>
+                                    <form id='form_{{entry.id}}'action='{% url "core:edit" id=entry.id %}' method="POST">
+                                        <script>
+                                            function postToDelete() {
+                                                $.ajax({
+                                                        url: '{% url "core:delete" id=entry.id %}',
+                                                        type: "POST",
+                                                        data: {csrfmiddlewaretoken: '{{csrf_token}}' },
+                                                        success: window.location.href = '{% url "core:index" %}'
+                                                })
+                                            };
+                                        </script>
+                                        <div class="modal-body">
+                                            {{ form.errors }}
+                                            {% csrf_token %}
+                                            {{ form.as_p }}
+                                        </div>
+                                        <div class="modal-footer">
+                                        <button onclick='postToDelete()' type='button'name="delete" class="btn btn-danger view-sheet">Delete</button>
+                                        <button style="overflow: visible !important; height: 0 !important; width: 0 !important; margin: 0 !important; border: 0 !important; padding: 0 !important; display: block !important;" type="submit" name="save"></button>
+                                        <a href="{% url 'core:sheet' id=entry.id %}" class="btn btn-success">View Sheet</a>
+                                        <button type="submit"name="save_as_draft" class="btn btn-warning">Save as Draft</button>
+                                        <button type="submit" name="save" class="btn btn-primary">Save</button>
+                                    </form>
+                                        </div>
+                                  </div>
+                                </div>
+                            </div>
+                                <script>
+                                        $("#form_{{entry.id}} #id_entry_date").after('<button type="button" onclick=todaysDate() class="btn btn-danger todays-date">Today</button>')
+                                        function todaysDate(){
+                                            var today = new Date();
+                                            var dd = String(today.getDate()).padStart(2, '0');
+                                            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                            var yyyy = today.getFullYear();
+                    
+                                            today = mm + '/' + dd + '/' + yyyy;
+                                            
+                                            $("#form_{{entry.id}} #id_entry_date").val(today)
+                    
+                                        }
+                                    </script>
+            {% endfor %}
+                                </div>
+        </div>
+        {% else %}
+            <div class="container">
+                <div class='row'>
+                    <div class="col-md-12 px-4">
+                        The entries you create will show up here!
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
+
+    
+      
 {% endblock %}

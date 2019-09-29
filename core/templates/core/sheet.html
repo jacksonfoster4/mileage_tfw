@@ -1,32 +1,40 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<h1>{{ pay_period_start }} - {{ pay_period_end }}</h1>
-<table id="example" class="display" style="width:100%">
-    <thead>
-        <tr>
-            {% for k in keys %}
-                <th>{{ k }}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for entry in sheet.entries %}
-            <tr>
+<div style="overflow: scroll" class="container">
+<h1 class="sheet-pay-period">{{ pay_period_start }} - {{ pay_period_end }}</h1>
+<table style="overflow-x: scroll"class="table">
+        <thead>
+          <tr>
+            <th scope="col">Entry Date</th>
+            <th scope="col">Destination</th>
+            <th scope="col">Notes</th>
+            <th scope="col">Odometer Start</th>
+            <th scope="col">Odometer End</th>
+            <th scope="col">Mileage</th>
+            <th scope="col">Reimbursement</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {% for entry in sheet.entries %}
+                <tr>
                 {% for k,v in entry.items %}
                     <td>{{ v }}</td>
                 {% endfor %}
-            </tr>
-        {% endfor %}
-    </tbody>
-    <tfoot>
-        <tr>
-            {% for k in keys %}
-                <th>{{ k }}</th>
+                </tr>
             {% endfor %}
-        </tr>
-    </tfoot>
-</table>
-<br>
-<a href="{% url 'core:index'%}">Home</a>
+            <th scope="row">Total</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{sheet.total_mileage}} miles</td>
+            <td>${{sheet.total_reimbursement}}</td>
+
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
 {% endblock %}
