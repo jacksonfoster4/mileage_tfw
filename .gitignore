@@ -1,6 +1,0 @@
-.DS_Store
-celerybeat-schedule.db
-dump.rdb
-.env
-.vscode
-*.pyc
