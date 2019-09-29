@@ -221,7 +221,7 @@ class Spreadsheet():
         for i, row in enumerate(self.wb.active.rows,1):
             for cell in self.wb.active[i]:
                 cell.alignment = Alignment(horizontal='center')
-                cell.fill = PatternFill(bgColor="ffffff", fill_type = "solid")
+                cell.fill = PatternFill(fgColor="ffffff", fill_type = "solid")
                 cell.font = Font(name='Arial', color="000000", size=14)
                 cell.border = Border(
                                 left=Side(border_style='thin', color='ffffff'),
