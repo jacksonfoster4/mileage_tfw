@@ -217,7 +217,7 @@ class Spreadsheet():
             self.wb.active[k[0]] = k[1]
 
             
-        #reset spreadsheet. colors get messed up for some reason. might be from BytesIO -> .xlsx
+        #reset spreadsheet
         for i, row in enumerate(self.wb.active.rows,1):
             for cell in self.wb.active[i]:
                 cell.alignment = Alignment(horizontal='center')
@@ -228,7 +228,9 @@ class Spreadsheet():
                                 right=Side(border_style='thin', color='ffffff'),
                                 top=Side(border_style='thin', color='ffffff'),
                                 bottom=Side(border_style='thin', color='ffffff')
-                            ) 
+                            )
+        
+        
 
         for i, row in enumerate(self.wb.active.rows,7): # format entries
             if i == len(self.entries)+1: break
