@@ -216,8 +216,8 @@ class Spreadsheet():
         for k in cells.items():
             self.wb.active[k[0]] = k[1]
 
-            
-        #reset spreadsheet
+        # test 
+        #reset spreadsheet. colors get messed up for some reason. might be from BytesIO -> .xlsx
         for i, row in enumerate(self.wb.active.rows,1):
             for cell in self.wb.active[i]:
                 cell.alignment = Alignment(horizontal='center')
