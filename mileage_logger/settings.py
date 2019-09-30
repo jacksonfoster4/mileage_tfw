@@ -49,7 +49,7 @@ INSTALLED_APPS = [
 ]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-STATIC_ROOT = os.path.join(BASE, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
 AUTH_USER_MODEL = 'users.CustomUser' # new
@@ -114,7 +114,7 @@ WSGI_APPLICATION = 'mileage_logger.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mileage-tfw',
+        'NAME': 'mileage_tfw',
         'USER': os.environ.get("MILEAGE_TFW_DB_USER", ''),
         'PASSWORD': os.environ.get("MILEAGE_TFW_DB_PASSWORD", ''),
         'HOST': 'localhost',
