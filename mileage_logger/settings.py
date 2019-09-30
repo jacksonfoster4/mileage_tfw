@@ -27,7 +27,8 @@ SECRET_KEY = 'jr7tn(_nu!q!1@1dcuuqw=)%%e82c&v#9&i1c4r^pvhs61jjak'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.138', 'localhost', '127.0.0.1']
+
+ALLOWED_HOSTS = ['134.209.1.158']
 
 
 # Application definition
@@ -48,13 +49,8 @@ INSTALLED_APPS = [
 ]
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
-PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE, 'static')
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
-SPREADSHEET_NAME = 'spreadsheet_template.xlsx'
 
 AUTH_USER_MODEL = 'users.CustomUser' # new
 LOGIN_URL = '/login' # new
@@ -117,9 +113,12 @@ WSGI_APPLICATION = 'mileage_logger.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'mileage-tfw',
+        'USER': os.environ.get("MILEAGE_TFW_DB_USER", ''),
+        'PASSWORD': os.environ.get("MILEAGE_TFW_DB_PASSWORD", ''),
+        'HOST': 'localhost',
+        'PORT': '',    }
 }
 
 
