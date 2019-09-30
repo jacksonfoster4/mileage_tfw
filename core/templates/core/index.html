@@ -151,6 +151,20 @@
                                 <button type="submit"name="save_as_draft" class="btn btn-warning">Save as Draft</button>
                                 <button type="submit" name="save" class="btn btn-primary">Save</button>
                             </form>
+                            <script>
+                                    $("#draft_entry_{{ entry.id }} #id_entry_date").after('<button type="button" onclick=todaysDateDraft() class="btn btn-danger todays-date">Today</button>')
+                                    function todaysDateDraft(){
+                                        var today = new Date();
+                                        var dd = String(today.getDate()).padStart(2, '0');
+                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                        var yyyy = today.getFullYear();
+                
+                                        today = mm + '/' + dd + '/' + yyyy;
+                                        
+                                        $("#draft_entry_{{ entry.id }} #id_entry_date").val(today)
+                
+                                    }
+                                </script>
                                 </div>
                           </div>
                         </div>
