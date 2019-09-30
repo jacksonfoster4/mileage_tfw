@@ -37,7 +37,7 @@ def index(request):
 
 @login_required
 def list_entries(request):
-    entries = list(Entry.objects.filter(user=request.user))
+    entries = list(Entry.objects.filter(user=request.user, draft=False))
     entries.reverse()
     dict = { }
     pay_periods = []
