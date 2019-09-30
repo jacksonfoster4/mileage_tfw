@@ -28,7 +28,7 @@ class Entry(models.Model):
     destination = models.CharField(max_length=500, blank=True)
     notes = models.CharField(max_length=500, blank=True)
     odo_start = models.FloatField(default=0)
-    odo_end = models.FloatField(default=0)
+    odo_end = models.FloatField(default=0, blank=True)
     pay_period_start = models.DateField('Week start')
     pay_period_end = models.DateField('Week end')
     draft = models.BooleanField(default=True)
