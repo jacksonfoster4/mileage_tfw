@@ -25,7 +25,7 @@ class Entry(models.Model):
 
     entry_date = models.DateField('Date of entry')
     pub_date = models.DateField('Last modified')
-    destination = models.CharField(max_length=500, blank=True)
+    destination = models.CharField(max_length=500)
     notes = models.CharField(max_length=500, blank=True)
     odo_start = models.FloatField(default=0)
     odo_end = models.FloatField(default=0, null=True, blank=True)
