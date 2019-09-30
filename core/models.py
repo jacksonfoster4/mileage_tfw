@@ -53,7 +53,10 @@ class Entry(models.Model):
 
 
     def miles_driven(self):
-        return math.ceil(self.odo_end - self.odo_start)
+        if self.odo_end:
+            return math.ceil(self.odo_end - self.odo_start)
+        else:
+            return 0
     
 
 
