@@ -18,10 +18,13 @@
       </script>
 <div id="main-heading-container" style="position: sticky"class="background container-fluid w-100">
     <div class="row flex-md-row flex-column-reverse">
-        <div class="col-md-8">
+        <div class="col-md-12">
             <h4 id='title'>My Current Mileage</h4>
             <h5 class='pay-period pb-4'>{{start_of_this_pay_period }} - {{end_of_this_pay_period}}</h5>
-            <h1 id='amount-reimbursed'>${{ reimbursement_this_period }}</h1><h5 id='amount-reimbursed-subtext'>{{ miles_driven_this_period }} miles</h5><br>
+            <h1 id='amount-reimbursed'>${{ reimbursement_this_period }}</h1>
+            <div class="">
+                    <h5 style="display: inline-block;" id='amount-reimbursed-subtext'>{{ miles_driven_this_period }} miles</h5><a id="logout-button" href="{% url 'logout' %}">Logout</a>
+            </div><br>
         </div>
     </div>
 </div>
@@ -135,7 +138,7 @@
                                                 url: '{% url "core:delete" id=entry.id %}',
                                                 type: "POST",
                                                 data: {csrfmiddlewaretoken: '{{csrf_token}}' },
-                                                success: window.location.href = '{% url "core:index" %}'
+                                                success: location.reload()
                                         })
                                     };
                                 </script>
@@ -214,7 +217,7 @@
                                                         url: '{% url "core:delete" id=entry.id %}',
                                                         type: "POST",
                                                         data: {csrfmiddlewaretoken: '{{csrf_token}}' },
-                                                        success: window.location.href = '{% url "core:index" %}'
+                                                        success: location.reload()
                                                 })
                                             };
                                         </script>

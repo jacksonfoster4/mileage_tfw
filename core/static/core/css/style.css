@@ -2,10 +2,8 @@
 
 body {
     font-family: 'Karla', sans-serif;
-    height: 110vh
 }
 main {
-    height: 110vh;
 }
 #title {
     font-size: 2rem
@@ -67,6 +65,7 @@ main {
     font-size: 1rem;
     padding-left: 10px
 }
+
 #main-heading-container {
     padding-top: 1rem;
     border-radius: 0 0px 8px 8px ;
