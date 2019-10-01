@@ -2,11 +2,8 @@
 
 body {
     font-family: 'Karla', sans-serif;
-    height: 110vh
 }
-main {
-    height: 110vh;
-}
+
 #title {
     font-size: 2rem
 }
@@ -66,6 +63,24 @@ main {
 #amount-reimbursed-subtext {
     font-size: 1rem;
     padding-left: 10px
+}
+#logout-button {
+    float: right; 
+    padding-right: 2rem;
+    color: white !important
+}
+.signup-form {
+    position: relative; 
+    top: 50%; 
+    transform: translateY(-50%);
+    background-color: white;
+    padding: 3rem;
+    color: black;
+    border-radius: 5px
+}
+#signup-text {
+    font-size: 3rem;
+    padding-bottom: 1rem
 }
 #main-heading-container {
     padding-top: 1rem;
