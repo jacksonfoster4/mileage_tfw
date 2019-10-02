@@ -191,7 +191,7 @@
         {% if current_entries|length %}
             <div id='current-entries-container'class="container">
                 {% for entry, form in current_entries %}
-                    <div id="entry_row_{{entry.id}}" data-toggle="modal" class="row mx-1 {% if current_entries|length == 1 %} single-entry {% endif %}" data-target="#entry_{{entry.id}}">
+                    <div id="entry_row_{{entry.id}}" data-toggle="modal" class="row mx-1 entry {% if current_entries|length == 1 %} single-entry {% endif %}" data-target="#entry_{{entry.id}}">
                             <div class='totals-number col-6'>
                                 {{ entry.destination }} <div class='badge miles-badge badge-red'>{{ entry.miles_driven }} miles</div>
                                 <br>
