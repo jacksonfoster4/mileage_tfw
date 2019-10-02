@@ -114,7 +114,7 @@
             {% for entry, form in current_drafts %}
                 <div id="draft_entry_row_{{entry.id}}" data-toggle="modal" class="row mx-1 entry {% if current_drafts|length == 1 %} single-entry {% endif %}" data-target="#draft_entry_{{entry.id}}">
                     <div class='totals-number col-6'>
-                        {{ entry.destination }} <div class='badge miles-badge badge-red'>{{ entry.miles_driven }} miles</div><div class='badge miles-badge badge-warning'>DRAFT</div>
+                        {{ entry.destination }} <div style="display: inline"class='badge miles-badge badge-red'>{{ entry.miles_driven }} miles</div><div style="display: inline"class='badge miles-badge ml-2 badge-warning'>DRAFT</div>
                         <br>
                         <div class='totals-title'>{{ entry.entry_date }}</div>
                     </div>
