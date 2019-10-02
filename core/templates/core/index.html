@@ -34,7 +34,7 @@
                     <div class="row">
                             <div class="totals-img-container col-2"><img class='totals-img'src='{% static "core/map.svg" %}'></div>
                             <div class="col-10">
-                                <div style='display:inline-block'class='totals-title'>Total Miles Driven</div>
+                                <div style='display:inline-block'class='totals-title'>Overall Miles Driven</div>
                                 <div class='totals-number'>{{ total_miles_driven }} miles</div>
                             </div>
                     </div>
@@ -47,7 +47,7 @@
                     <div class="row">
                             <div class="totals-img-container col-2"><img class='totals-img'src='{% static "core/dollar.svg" %}'></div>
                             <div class="col-10">
-                                <div style='display:inline-block'class='totals-title'>Total Reimbursement</div>
+                                <div style='display:inline-block'class='totals-title'>Overall Reimbursement</div>
                                 <div class='totals-number'>${{ total_reimbursement }}</div>
                             </div>
                     </div>
@@ -86,7 +86,7 @@
                     </div>
                 </form>
                 <script>
-                    $("#new #id_entry_date").after('<button type="button" onclick=todaysDateNew() class="btn btn-danger todays-date">Today</button>')
+                    $("#new #id_entry_date").after('<button type="button" onclick=todaysDateNew() class="btn btn-danger ml-2 todays-date">Today</button>')
                     function todaysDateNew(){
                         var today = new Date();
                         var dd = String(today.getDate()).padStart(2, '0');
@@ -154,7 +154,7 @@
                                 <button type="submit" name="save" class="btn btn-primary">Save</button>
                             </form>
                             <script>
-                                    $("#draft_entry_{{ entry.id }} #id_entry_date").after('<button type="button" onclick=todaysDateDraft() class="btn btn-danger todays-date">Today</button>')
+                                    $("#draft_entry_{{ entry.id }} #id_entry_date").after('<button type="button" onclick=todaysDateDraft() class="btn btn-danger ml-2 todays-date">Today</button>')
                                     function todaysDateDraft(){
                                         var today = new Date();
                                         var dd = String(today.getDate()).padStart(2, '0');
@@ -238,7 +238,7 @@
                                 </div>
                             </div>
                                 <script>
-                                        $("#form_{{entry.id}} #id_entry_date").after('<button type="button" onclick=todaysDate() class="btn btn-danger todays-date">Today</button>')
+                                        $("#form_{{entry.id}} #id_entry_date").after('<button type="button" onclick=todaysDate() class="btn btn-danger ml-2 todays-date">Today</button>')
                                         function todaysDate(){
                                             var today = new Date();
                                             var dd = String(today.getDate()).padStart(2, '0');

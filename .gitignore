@@ -4,3 +4,4 @@ dump.rdb
 .env
 .vscode
 *.pyc
+db.sqlite3

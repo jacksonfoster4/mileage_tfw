@@ -28,22 +28,34 @@
                                             <span aria-hidden="true">&times;</span>
                                         </button>
                                         </div>
-                                        <form id='form_{{entry.id}}'action='{% url "core:edit" id=entry.id %}' method="POST">
-                                            <script>
-                                                function postToDelete() {
-                                                    $.ajax({
-                                                            url: '{% url "core:delete" id=entry.id %}',
-                                                            type: "POST",
-                                                            data: {csrfmiddlewaretoken: '{{csrf_token}}' },
-                                                            success: location.reload()
-                                                    })
-                                                };
-                                            </script>
+                                        <form id='form_{{entry.id}}'action='{% url "core:edit" id=entry.id %}' method="POST">  
                                             <div class="modal-body">
                                                 {{ form.errors }}
                                                 {% csrf_token %}
                                                 {{ form.as_p }}
                                             </div>
+                                            <script>
+                                                    $("#form_{{entry.id}} #id_entry_date").after('<button type="button" onclick=todaysDate() class="btn btn-danger ml-2 todays-date">Today</button>')
+                                                    function postToDelete() {
+                                                        $.ajax({
+                                                                url: '{% url "core:delete" id=entry.id %}',
+                                                                type: "POST",
+                                                                data: {csrfmiddlewaretoken: '{{csrf_token}}' },
+                                                                success: location.reload()
+                                                        })
+                                                    };
+                                                    function todaysDate(){
+                                                        var today = new Date();
+                                                        var dd = String(today.getDate()).padStart(2, '0');
+                                                        var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                                                        var yyyy = today.getFullYear();
+                                
+                                                        today = mm + '/' + dd + '/' + yyyy;
+                                                        
+                                                        $("#form_{{entry.id}} #id_entry_date").val(today)
+                        
+                                                    }
+                                                </script>
                                             <div class="modal-footer">
                                             <button onclick='postToDelete()' type='button'name="delete" class="btn btn-danger view-sheet">Delete</button>
                                             <button style="overflow: visible !important; height: 0 !important; width: 0 !important; margin: 0 !important; border: 0 !important; padding: 0 !important; display: block !important;" type="submit" name="save"></button>
