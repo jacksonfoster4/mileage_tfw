@@ -72,10 +72,11 @@ class Entry(models.Model):
     
 
     def get_start_of_pay_period_date(self, date=None):
-        if date is None and self.pub_date: 
-            date = self.pub_date
-        else:
-            date = timezone.now().date()
+        if date is None: 
+            if self.pub_date: 
+                date = self.pub_date
+            else:
+                date = timezone.now().date()
 
         one_week = timedelta(days=7)
 
@@ -91,10 +92,11 @@ class Entry(models.Model):
 
 
     def get_end_of_pay_period_date(self, date=None):
-        if date is None and self.pub_date: 
-            date = self.pub_date
-        else:
-            date = timezone.now().date()
+        if date is None: 
+            if self.pub_date: 
+                date = self.pub_date
+            else:
+                date = timezone.now().date()
 
         one_week = timedelta(days=7)
 

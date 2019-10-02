@@ -1,7 +1,7 @@
 from django.test import TestCase
 from .models import Entry, CoreAppSettings
 from .utils import Spreadsheet
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 from users.models import CustomUser
 from preferences import preferences
 from decimal import Decimal
@@ -58,18 +58,13 @@ class EntryTestCase(TestCase):
             self.assertEquals(entry.amount_reimbursed(rate=self.reimbursement_rate), Decimal('{:.2f}'.format(round(entry.miles_driven() * self.reimbursement_rate, 2))))
     
     def test_get_start_of_pay_period_date(self):
-        pub_date = datetime(2019, 9, 9)
-        pay_period_start = datetime(2019, 9, 6)
-        self.assertEquals(Entry().get_start_of_pay_period_date(date=pub_date), pay_period_start)
-    
-    def test_get_start_of_pay_period_date(self):
-        pub_date = datetime(2019, 9, 9)
-        pay_period_start = datetime(2019, 9, 6)
+        pub_date = date(2019, 9, 9)
+        pay_period_start = date(2019, 9, 6)
         self.assertEquals(Entry().get_start_of_pay_period_date(date=pub_date), pay_period_start)
             
-    def test_get_start_of_pay_period_date(self):
-        pub_date = datetime(2019, 9, 9)
-        pay_period_end = datetime(2019, 9, 12)
+    def test_get_end_of_pay_period_date(self):
+        pub_date = date(2019, 9, 9)
+        pay_period_end = date(2019, 9, 12)
         self.assertEquals(Entry().get_end_of_pay_period_date(date=pub_date), pay_period_end)
 
 class SpreadsheetTestCase(TestCase):
