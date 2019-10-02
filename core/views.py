@@ -23,7 +23,7 @@ def index(request):
     current_entries = list(zip(current_entry_list, list(map(lambda x: EntryForm(instance=x), current_entry_list))))
     
     miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
-    reimbursement_this_period = Decimal('{:.2f}'.format(round(miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate, 2))) # pylint: disable=no-member
+    reimbursement_this_period = Decimal('{:.2f}'.format(miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate, 2)) # pylint: disable=no-member
     return render(request, 'core/index.html', {'current_entries': current_entries,
                                                 'current_drafts': current_drafts, 
                                                 'miles_driven_this_period': miles_driven_this_period, 
