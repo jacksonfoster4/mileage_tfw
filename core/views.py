@@ -15,11 +15,9 @@ def index(request):
     all_entries = list(Entry.objects.filter(user=request.user, draft=False))
 
     drafts = list(filter(lambda x: x.draft == True, entries))
-    drafts.reverse()
     current_drafts = list(zip(drafts, list(map(lambda x: EntryForm(instance=x), drafts))))
     
     current_entry_list = list(filter(lambda x: x.draft == False, entries))
-    current_entry_list.reverse()
     current_entries = list(zip(current_entry_list, list(map(lambda x: EntryForm(instance=x), current_entry_list))))
     
     miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
