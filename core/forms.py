@@ -15,7 +15,7 @@ class EntryForm(ModelForm):
     def save(self, request, commit=True):
         obj = super().save(commit=False)
         obj.user = request.user
-        obj.pub_date = timezone.now()
+        obj.pub_date = timezone.now().date()
         obj.pay_period_start = obj.get_start_of_pay_period_date()
         obj.pay_period_end = obj.get_end_of_pay_period_date()
         
