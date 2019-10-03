@@ -21,7 +21,7 @@ app.conf.beat_schedule = {
     # Executes every Friday at 00:00.
     'send-sheets-every-friday-morning': {
         'task': 'send_spreadsheets',
-        'schedule': crontab(hour=0, minute=0, day_of_week=5),
+        'schedule': crontab(hour=17, minute=0, day_of_week=4),
     },
 }
 
