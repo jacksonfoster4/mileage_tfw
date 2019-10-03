@@ -138,9 +138,8 @@
                                                 url: '{% url "core:delete" id=entry.id %}',
                                                 type: "POST",
                                                 data: {csrfmiddlewaretoken: '{{csrf_token}}' },
-                                                success: location.reload(true)
+                                                success: setTimeout(function(){window.location.reload();},100),
                                         })
-                                        return false
                                     };
                                 </script>
                                 <div class="modal-body">
@@ -218,7 +217,7 @@
                                                         url: '{% url "core:delete" id=entry.id %}',
                                                         type: "POST",
                                                         data: {csrfmiddlewaretoken: '{{csrf_token}}' },
-                                                        success: location.reload(true)
+                                                        success: setTimeout(function(){window.location.reload();},100),
                                                 })
                                                 return false
                                             };
