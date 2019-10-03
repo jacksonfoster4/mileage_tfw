@@ -34,14 +34,14 @@
                                                 {% csrf_token %}
                                                 {{ form.as_p }}
                                             </div>
-                                            <script>
+                                            <script type="text/javascript">
                                                     $("#form_{{entry.id}} #id_entry_date").after('<button type="button" onclick=todaysDate() class="btn btn-danger ml-2 todays-date">Today</button>')
                                                     function postToDelete() {
                                                         $.ajax({
                                                                 url: '{% url "core:delete" id=entry.id %}',
                                                                 type: "POST",
                                                                 data: {csrfmiddlewaretoken: '{{csrf_token}}' },
-                                                                success: location.reload(true)
+                                                                success: setTimeout(function(){window.location.reload();},100),
                                                         })
                                                         return false
                                                     };
