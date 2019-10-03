@@ -148,6 +148,7 @@ button {
     color: white
 }
 .list-entry {
+    cursor: pointer;
     border: 1px solid #cacaca;
     border-radius: 5px 5px 5px 5px;
     padding-top: 1rem;

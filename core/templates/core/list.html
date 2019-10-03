@@ -41,7 +41,7 @@
                                                                 url: '{% url "core:delete" id=entry.id %}',
                                                                 type: "POST",
                                                                 data: {csrfmiddlewaretoken: '{{csrf_token}}' },
-                                                                success: location.reload()
+                                                                success: location.reload(true)
                                                         })
                                                         return false
                                                     };
