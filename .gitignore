@@ -5,3 +5,4 @@ dump.rdb
 .vscode
 *.pyc
 db.sqlite3
+celerybeat.pid
