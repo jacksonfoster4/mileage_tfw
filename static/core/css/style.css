@@ -45,7 +45,7 @@ body {
 .entry:nth-last-of-type(2) {
     border-radius: 0px 0px 5px 5px ;
 }
-.entry:first-child.single-entry, .entry:nth-last-of-type(2) {
+.entry:first-child.single-entry, .entry:nth-last-of-type(2).single-entry {
     border-radius: 5px 5px 5px 5px ;
 }
 .entry-reimbursement {
