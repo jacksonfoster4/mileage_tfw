@@ -42,7 +42,6 @@ def test_send_spreadsheets():
         entries = list( filter( filter_current_entries, Entry.objects.filter(user=user) ) )
         if entries:
             Spreadsheet(user, entries).send_spreadsheet()
-test_send_spreadsheets.delay()
 """ need to initialize beat scheduler 
         celery -A mileage_logger beat 
     and then initialize the worker process
