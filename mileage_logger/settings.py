@@ -113,12 +113,9 @@ WSGI_APPLICATION = 'mileage_logger.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mileage_tfw',
-        'USER': os.environ.get("MILEAGE_TFW_DB_USER", ''),
-        'PASSWORD': os.environ.get("MILEAGE_TFW_DB_PASSWORD", ''),
-        'HOST': 'localhost',
-        'PORT': '',    }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
 
 

@@ -18,7 +18,7 @@ app.config_from_object('django.conf:settings')
 app.conf.timezone = 'US/Pacific'
 
 app.conf.beat_schedule = {
-    # Executes every Friday at 00:00.
+    # Executes every Friday at 00:00
     'send-sheets-every-friday-morning': {
         'task': 'send_spreadsheets',
         'schedule': crontab(hour=0, minute=0, day_of_week=5),
