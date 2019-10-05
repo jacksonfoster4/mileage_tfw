@@ -1,10 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
-
-from .forms import CustomUserCreationForm
+from .models import CustomUser
+from .forms import CustomUserCreationForm, CustomUserChangeForm
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -19,10 +20,19 @@ class SignUpView(CreateView):
         return valid
 
 @login_required
-def edit(request, id):
+def edit(request):
+    user = CustomUser.objects.get(id=request.user.id)
     if request.method == 'POST':
-        pass
+        form = CustomUserChangeForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save(request)
+            login(request, user)
+            return render(request, 'users/users_update_form.html', { 'form': form, 'user': user, 'messages': ['Successfully updated!'] })
+        else:
+            return render(request, 'users/users_update_form.html', {'form': form, 'user': user})
+
     else:
-        pass
+        form = CustomUserChangeForm(instance=user)
+        return render(request, 'users/users_update_form.html', {'form': form, 'user': user})
 
 

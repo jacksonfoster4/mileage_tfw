@@ -13,6 +13,7 @@ from decimal import Decimal
 @never_cache
 @login_required
 def index(request):
+    messages = []
     entries = Entry.current_entries(request.user)
 
     drafts = list(filter(lambda x: x.draft == True, entries))
@@ -32,7 +33,8 @@ def index(request):
                                                 'total_reimbursement': sum(map(lambda x: x.amount_reimbursed(), all_entries)),
                                                 'total_miles_driven': sum(map(lambda x: x.miles_driven(), all_entries)),
                                                 'start_of_this_pay_period': Entry().get_start_of_pay_period_date().strftime("%b %d %Y"),
-                                                'end_of_this_pay_period': Entry().get_end_of_pay_period_date().strftime("%b %d %Y")
+                                                'end_of_this_pay_period': Entry().get_end_of_pay_period_date().strftime("%b %d %Y"),
+                                                'messages': messages
                                                 })
 
 @never_cache
