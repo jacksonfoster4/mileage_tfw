@@ -1,0 +1,31 @@
+
+    {% include 'core/header.html' %}
+    <div class="pb-4 px-0">
+        {% if form.errors %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Holy guacamole!<br></strong> 
+            {{ form.errors.as_text }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            </div>
+        {% endif %}
+        {% for message in messages %}
+            <div class="alert alert-primary alert-dismissible fade show" role="alert">
+                <strong>{{ message }}<br></strong> 
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        {% endfor %}
+        <div class="container">
+            <div class="row py-4 px-3">
+                <form action="{% url 'users:edit' %}" method="POST">
+                    {% csrf_token %}
+                    {{form.as_p}}
+                    <button class="btn btn-primary" type="submit">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% include 'core/footer.html' %}

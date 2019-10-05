@@ -25,7 +25,11 @@ SECRET_KEY = 'jr7tn(_nu!q!1@1dcuuqw=)%%e82c&v#9&i1c4r^pvhs61jjak'
 DEBUG = True
 
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['134.209.1.158', 'www.mileage.thefoundationworks.com', 'mileage.thefoundationworks.com']
+=======
+ALLOWED_HOSTS = []
+>>>>>>> f07b8dc6aa7984a52ef092a710940f22a8334339
 
 
 # Application definition
