@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 
 from .forms import CustomUserCreationForm
 
@@ -16,3 +17,12 @@ class SignUpView(CreateView):
         user = authenticate(username=username, password=password)
         login(self.request, user)
         return valid
+
+@login_required
+def edit(request, id):
+    if request.method == 'POST':
+        pass
+    else:
+        pass
+
+

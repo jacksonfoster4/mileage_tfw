@@ -7,12 +7,13 @@ from core.utils import Spreadsheet
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from decimal import Decimal
 
+@never_cache
 @login_required
 def index(request):
     entries = Entry.current_entries(request.user)
-    all_entries = list(Entry.objects.filter(user=request.user, draft=False))
 
     drafts = list(filter(lambda x: x.draft == True, entries))
     current_drafts = list(zip(drafts, list(map(lambda x: EntryForm(instance=x), drafts))))
@@ -22,6 +23,7 @@ def index(request):
     
     miles_driven_this_period = sum(map(lambda x: x.miles_driven(), current_entry_list))
     reimbursement_this_period = Decimal('{:.2f}'.format(miles_driven_this_period * preferences.CoreAppSettings.reimbursement_rate, 2)) # pylint: disable=no-member
+    all_entries = list(Entry.objects.filter(user=request.user, draft=False))
     return render(request, 'core/index.html', {'current_entries': current_entries,
                                                 'current_drafts': current_drafts, 
                                                 'miles_driven_this_period': miles_driven_this_period, 
@@ -33,7 +35,7 @@ def index(request):
                                                 'end_of_this_pay_period': Entry().get_end_of_pay_period_date().strftime("%b %d %Y")
                                                 })
 
-
+@never_cache
 @login_required
 def list_entries(request):
     entries = list(Entry.objects.filter(user=request.user, draft=False))
@@ -104,6 +106,7 @@ def delete(request, id):
     Entry.objects.filter(id=id).delete()
     return redirect('core:index')
 
+@never_cache
 @login_required
 def view_sheet(request, id):
     entry = Entry.objects.get(id=id)
