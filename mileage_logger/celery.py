@@ -19,9 +19,9 @@ app.conf.timezone = 'US/Pacific'
 
 app.conf.beat_schedule = {
     # Executes every Friday at 00:00
-    'send-sheets-every-friday-morning': {
+    'send-sheets-every-thursday-afternoon': {
         'task': 'send_spreadsheets',
-        'schedule': crontab(hour=0, minute=0, day_of_week=5),
+        'schedule': crontab(hour=18, minute=30, day_of_week=4),
     },
 }
 
@@ -32,7 +32,7 @@ def send_spreadsheets():
         filter_current_entries = lambda entry: entry.get_end_of_pay_period_date() == date.today() and entry.draft==False
         entries = list( filter( filter_current_entries, Entry.objects.filter(user=user) ) )
         if entries:
-                Spreadsheet(user, entries).send_spreadsheet()
+            Spreadsheet(user, entries).send_spreadsheet()
 
 @app.task(name="test_send_spreadsheets")
 def test_send_spreadsheets():
