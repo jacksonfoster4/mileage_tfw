@@ -13,15 +13,16 @@ class CustomUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm):
         model = CustomUser
         fields = ('first_name', 'last_name','email', 'username')
-    password = forms.CharField(label='Password', max_length=255, widget=forms.PasswordInput)
-    confirm_password = forms.CharField(label='Confirm Password', max_length=255, widget=forms.PasswordInput)
+    password = forms.CharField(label='Password', max_length=255, widget=forms.PasswordInput, required=False)
+    confirm_password = forms.CharField(label='Confirm Password', max_length=255, widget=forms.PasswordInput, required=False)
 
     def save(self, request, commit=True):
-        if request.POST['password'] != request.POST['confirm_password']:
+        if self.cleaned_data['password'] != self.cleaned_data['confirm_password']:
             raise forms.ValidationError("Password's do not match")
         else:
             obj = super().save(commit=False)
-            obj.set_password(request.POST['password'])
+            if self.cleaned_data['password'] is not None:
+                obj.set_password(request.POST['password'])
             if commit:
                 obj.save()
             else:
