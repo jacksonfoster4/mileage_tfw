@@ -46,7 +46,7 @@ class Spreadsheet():
 
     
         self.wb = Workbook()
-        self.wb.active.title = 'Mileage Log and Reimbursement'
+        self.wb.active.title = "{} {} - Mileage Log and Reimbursement".format(self.user.first_name, self.user.last_name)
         self.worksheet = self.wb.active
     
 
@@ -142,31 +142,31 @@ class Spreadsheet():
         receiver_email = preferences.CoreAppSettings.spreadsheet_email # pylint: disable=no-member
 
         message = MIMEMultipart("alternative")
-        message["Subject"] = "Mileage Log"
+        message["Subject"] = "{} {} - Mileage Log".format(self.user.first_name, self.user.last_name)
         message["From"] = sender_email
         message["To"] = receiver_email
 
         text = """\
-                Hey Brad,
+                Hey Mel,
                 Attached is my mileage log for this week.
                 
                 Thanks!
 
-                {}
-                """.format(self.user.first_name)
+                {} {}
+                """.format(self.user.first_name, self.user.last_name)
 
         html = """\
                 <html>
                 <body>
-                    <p>Hey Brad, <br><br>
+                    <p>Hey Mel, <br><br>
                     Attached is my mileage log for this week.<br><br>
                     Thanks!<br><br>
-                    {}
+                    {} {}
                     </p>
                     <br><br><br><br>
                 </body>
                 </html>
-                """.format(self.user.first_name)
+                """.format(self.user.first_name, self.user.last_name)
         part1 = MIMEText(text, "plain")
         part2 = MIMEText(html, "html")
         
