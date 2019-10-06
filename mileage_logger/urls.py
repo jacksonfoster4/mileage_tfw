@@ -20,6 +20,7 @@ from django.contrib.auth import views as auth_views
 from core.views import index as app_index
 from django.urls import reverse_lazy
 from django.views.generic import RedirectView
+from users.views import PasswordResetConfirmViewCustom
 
 urlpatterns = [
     path('', RedirectView.as_view(url=reverse_lazy('core:index'), permanent=False)),
@@ -30,7 +31,6 @@ urlpatterns = [
     path('login/', auth_views.LoginView.as_view(),name='login'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
     path('password_reset/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    path('reset/<uidb64>/<token>/',
-        auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/<uidb64>/<token>/', PasswordResetConfirmViewCustom.as_view(), name='password_reset_confirm'),
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]

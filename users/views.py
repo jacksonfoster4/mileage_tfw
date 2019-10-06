@@ -5,7 +5,8 @@ from django.contrib.auth.forms import UserChangeForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .models import CustomUser
-from .forms import CustomUserCreationForm, CustomUserChangeForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm, SetPasswordFormNoHelpText
+from django.contrib.auth.views import PasswordResetConfirmView
 
 class SignUpView(CreateView):
     form_class = CustomUserCreationForm
@@ -36,3 +37,5 @@ def edit(request):
         return render(request, 'users/users_update_form.html', {'form': form, 'user': user})
 
 
+class PasswordResetConfirmViewCustom(PasswordResetConfirmView):
+    form_class = SetPasswordFormNoHelpText

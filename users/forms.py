@@ -1,11 +1,20 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import CustomUser
+from django.views.generic.edit import FormView
+from django.contrib.auth.forms import SetPasswordForm
+from django.utils.translation import gettext, gettext_lazy as _
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
         model = CustomUser
         fields = ('first_name', 'last_name','email', 'username')
+
+    def __init__(self, *args, **kwargs):
+        super(CustomUserCreationForm, self).__init__(*args, **kwargs)
+
+        for fieldname in ['username', 'password1', 'password2']:
+            self.fields[fieldname].help_text = None
 
     
 
@@ -40,6 +49,14 @@ class CustomUserChangeForm(forms.ModelForm):
             obj.save()
         else:
             return obj
+
+class SetPasswordFormNoHelpText(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super(SetPasswordFormNoHelpText, self).__init__(*args, **kwargs)
+        self.fields['new_password1'].help_text = None
+    
+
+
 
 
 
