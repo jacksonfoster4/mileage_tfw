@@ -23,7 +23,7 @@ class Spreadsheet():
         self.email = preferences.CoreAppSettings.spreadsheet_email #pylint: disable=no-member
         self.user = user
         self.entries = entries
-        self.offset = 8 # where the entries begin
+        self.offset = 8 # row where the entries begin
 
         self.cell = lambda column, row: "{}{}".format(self.columns[column],row)
         
@@ -148,6 +148,7 @@ class Spreadsheet():
 
         text = """\
                 Hey Mel,
+
                 Attached is my mileage log for this week.
                 
                 Thanks!
@@ -188,6 +189,7 @@ class Spreadsheet():
 
         message.attach(part1)
         message.attach(part2)
+        
         # Create a secure SSL context
         context = ssl.create_default_context()
 
@@ -216,8 +218,7 @@ class Spreadsheet():
         for k in cells.items():
             self.wb.active[k[0]] = k[1]
 
-        # testing
-        #reset spreadsheet. colors get messed up for some reason. might be from BytesIO -> .xlsx
+        #reset spreadsheet. colors get messed up for some reason
         for i, row in enumerate(self.wb.active.rows,1):
             for cell in self.wb.active[i]:
                 cell.alignment = Alignment(horizontal='center')
