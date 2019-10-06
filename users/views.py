@@ -25,7 +25,7 @@ def edit(request):
     if request.method == 'POST':
         form = CustomUserChangeForm(request.POST, instance=user)
         if form.is_valid():
-            form.save(request)
+            form.save(request.POST)
             login(request, user)
             return render(request, 'users/users_update_form.html', { 'form': form, 'user': user, 'messages': ['Successfully updated!'] })
         else:
