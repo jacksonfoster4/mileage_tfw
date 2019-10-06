@@ -16,6 +16,9 @@ class CustomUserChangeForm(forms.ModelForm):
     class Meta(forms.ModelForm):
         model = CustomUser
         fields = ('first_name', 'last_name','email', 'username')
+        help_texts = {
+            'username': None,
+        }
     
 
     def clean(self):
