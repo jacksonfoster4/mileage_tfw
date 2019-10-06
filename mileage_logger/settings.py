@@ -53,7 +53,7 @@ AUTH_USER_MODEL = 'users.CustomUser' # new
 LOGIN_URL = '/login' # new
 LOGIN_REDIRECT_URL = '/app' # new
 LOGOUT_REDIRECT_URL = '/login' # new
-SITE_ID = 2 # new
+SITE_ID = 3 # new
 
 BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379'

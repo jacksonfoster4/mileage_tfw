@@ -38,10 +38,11 @@ def send_spreadsheets():
 def test_send_spreadsheets():
     users = CustomUser.objects.all()
     for user in users:
-        filter_current_entries = lambda entry: entry.get_end_of_pay_period_date() == date.today() and entry.draft==False
+        filter_current_entries = lambda entry: entry.get_end_of_pay_period_date() == date.today()+timedelta(days=5) and entry.draft==False
         entries = list( filter( filter_current_entries, Entry.objects.filter(user=user) ) )
         if entries:
             Spreadsheet(user, entries).send_spreadsheet()
+test_send_spreadsheets.delay()
 """ need to initialize beat scheduler 
         celery -A mileage_logger beat 
     and then initialize the worker process
