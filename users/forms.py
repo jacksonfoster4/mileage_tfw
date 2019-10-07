@@ -20,7 +20,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 class CustomUserChangeForm(forms.ModelForm):
     password = forms.CharField(label='Password', max_length=255, widget=forms.PasswordInput, required=False)
-    confirm_password = forms.CharField(label='Confirm Password', max_length=255, widget=forms.PasswordInput, required=False, empty_value=None)
+    confirm_password = forms.CharField(label='Confirm Password', max_length=255, widget=forms.PasswordInput, required=False, empty_value='')
 
     class Meta(forms.ModelForm):
         model = CustomUser
@@ -34,7 +34,6 @@ class CustomUserChangeForm(forms.ModelForm):
         cleaned_data = super(CustomUserChangeForm, self).clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
-
         if password != confirm_password:
             raise forms.ValidationError(
                 "Password's do not match"
