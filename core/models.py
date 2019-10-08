@@ -17,7 +17,9 @@ class CoreAppSettings(Preferences):
     class Meta:
         verbose_name_plural = "core app settings"
     reimbursement_rate = models.FloatField(default=0.53)
-    spreadsheet_email = models.CharField(max_length=255, default='jacksonfoster444@gmail.com')
+    abci_send_to_email = models.CharField(max_length=255, default='jacksonfoster444@gmail.com')
+    myz_send_to_email = models.CharField(max_length=255, default='jacksonfoster444@gmail.com')
+    acorn_send_to_email = models.CharField(max_length=255, default='jacksonfoster444@gmail.com')
 
 
 class Entry(models.Model):
