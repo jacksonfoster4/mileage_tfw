@@ -20,7 +20,10 @@ class CoreAppSettings(Preferences):
     abci_send_to_email = models.CharField(max_length=255, default='jacksonfoster444@gmail.com')
     myz_send_to_email = models.CharField(max_length=255, default='jacksonfoster444@gmail.com')
     acorn_send_to_email = models.CharField(max_length=255, default='jacksonfoster444@gmail.com')
-
+    abci_contact_name = models.CharField(max_length=255, default='Mel')
+    myz_contact_name = models.CharField(max_length=255, default='Brad')
+    acorn_contact_name = models.CharField(max_length=255, default='Brad')
+    cc_email = models.CharField(max_length=255, default='jackson@jacksonwfoster.com')
 
 class Entry(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

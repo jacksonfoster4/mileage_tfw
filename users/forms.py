@@ -9,11 +9,6 @@ class CustomUserCreationForm(UserCreationForm):
     class Meta(UserCreationForm):
         model = CustomUser
         fields = ('first_name', 'last_name','email', 'username', 'contractor')
-        widgets = { 
-            'contractor': forms.Select(
-                    choices=( ('ABCI', 'ABC Inc.'), ('MYZ', 'MYZ Inc.'), ('Acorn', 'Acorn Construction') )
-                ),
-        }
     def __init__(self, *args, **kwargs):
         super(CustomUserCreationForm, self).__init__(*args, **kwargs)
 
@@ -29,11 +24,6 @@ class CustomUserChangeForm(forms.ModelForm):
     class Meta(forms.ModelForm):
         model = CustomUser
         fields = ('first_name', 'last_name','email', 'username', 'contractor')
-        widgets = { 
-            'contractor': forms.Select(
-                    choices=( ('ABCI', 'ABC Inc.'), ('MYZ', 'MYZ Inc.'), ('Acorn', 'Acorn Construction') )
-                ),
-        }  
         help_texts = {
             'username': None,
         }
