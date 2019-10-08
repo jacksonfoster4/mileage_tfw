@@ -20,7 +20,6 @@ from email.mime.text import MIMEText
 
 class Spreadsheet():
     def __init__(self, user, entries):
-        self.email = preferences.CoreAppSettings.spreadsheet_email #pylint: disable=no-member
         self.user = user
         self.entries = entries
         self.offset = 8 # row where the entries begin
