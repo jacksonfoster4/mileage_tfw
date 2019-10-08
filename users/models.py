@@ -4,10 +4,16 @@ from django.apps import apps
 from preferences import preferences
 from decimal import Decimal
 
+contractor_choices = (
+    ('ABCI', 'ABC Inc.'),
+    ('MYZ', 'MYZ Inc.'),
+    ('ACORN', 'Acorn Construction')
+)
+
 class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
-    contractor = models.CharField(max_length=500, default='MYZ')
+    contractor = models.CharField(max_length=500, choices=contractor_choices)
 
     def __str__(self):
         return "{0}, {1} | {2}".format(self.last_name, self.first_name, self.username)

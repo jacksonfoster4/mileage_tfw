@@ -139,27 +139,40 @@ class Spreadsheet():
 
         sender_email = os.getenv("SENDER_EMAIL")
         password = os.getenv("SENDER_EMAIL_PASSWORD")
-        receiver_email = preferences.CoreAppSettings.spreadsheet_email # pylint: disable=no-member
+        emails = {
+            'ABCI': preferences.CoreAppSettings.abci_send_to_email,
+            'MYZ': preferences.CoreAppSettings.myz_send_to_email,
+            'ACORN': preferences.CoreAppSettings.myz_send_to_email
+        }
+        receivers = {
+            'ABCI': preferences.CoreAppSettings.abci_contact_name,
+            'MYZ': preferences.CoreAppSettings.myz_contact_name,
+            'ACORN': preferences.CoreAppSettings.myz_contact_name
+        }
+        receiver_email = emails[self.user.contractor]
+        receiver = receivers[self.user.contractor]
+
 
         message = MIMEMultipart("alternative")
         message["Subject"] = "{} {} - Mileage Log".format(self.user.first_name, self.user.last_name)
         message["From"] = sender_email
         message["To"] = receiver_email
+        message["CC"] = preferences.CoreAppSettings.cc_email
 
         text = """\
-                Hey Mel,
+                Hey {},
 
                 Attached is my mileage log for this week.
                 
                 Thanks!
 
                 {} {}
-                """.format(self.user.first_name, self.user.last_name)
+                """.format(receiver, self.user.first_name, self.user.last_name)
 
         html = """\
                 <html>
                 <body>
-                    <p>Hey Mel, <br><br>
+                    <p>Hey {}, <br><br>
                     Attached is my mileage log for this week.<br><br>
                     Thanks!<br><br>
                     {} {}
@@ -167,7 +180,7 @@ class Spreadsheet():
                     <br><br><br><br>
                 </body>
                 </html>
-                """.format(self.user.first_name, self.user.last_name)
+                """.format(receiver, self.user.first_name, self.user.last_name)
         part1 = MIMEText(text, "plain")
         part2 = MIMEText(html, "html")
         
