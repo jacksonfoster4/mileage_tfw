@@ -3,7 +3,89 @@
 {% block title %}Login{% endblock %}
 {% block content %}
 {% load static %}
-{% if form.errors %}
+<style type="text/css">
+@import url('https://fonts.googleapis.com/css?family=Karla&display=swap');
+
+	body{
+		color: #fff;
+    background-image: url("{% static 'core/background.png' %} ");
+    background-size: cover;
+    height: 100vh;
+    font-family: 'Karla', sans-serif;
+	}
+    .form-control{
+		height: 41px;
+		background: #f2f2f2;
+		box-shadow: none !important;
+		border: none;
+	}
+	.form-control:focus{
+		background: #e2e2e2;
+	}
+    .form-control, .btn{        
+        border-radius: 3px;
+    }
+	.signup-form{
+		width: 390px;
+		margin: 30px auto;
+	}
+	.signup-form form{
+		color: #999;
+		border-radius: 3px;
+    	margin-bottom: 15px;
+        background: #fff;
+        box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+        padding: 30px;
+    }
+	.signup-form h2 {
+		color: #333;
+		font-weight: bold;
+        margin-top: 0;
+    }
+    .signup-form hr {
+        margin: 0 -30px 20px;
+    }    
+	.signup-form .form-group{
+		margin-bottom: 20px;
+	}
+	.signup-form input[type="checkbox"]{
+		margin-top: 3px;
+	}
+	.signup-form .row div:first-child{
+		padding-right: 10px;
+	}
+	.signup-form .row div:last-child{
+		padding-left: 10px;
+	}
+    .signup-form .btn{        
+        font-size: 16px;
+        font-weight: bold;
+		border: none;
+		min-width: 140px;
+    }
+	.signup-form .btn:hover, .signup-form .btn:focus {
+        outline: none;
+	}
+    .signup-form a{
+		color: #fff;
+		text-decoration: underline;
+	}
+	.signup-form a:hover{
+		text-decoration: none;
+	}
+	.signup-form form a{
+		color: #da575c;
+		text-decoration: none;
+	}	
+	.signup-form form a:hover{
+		text-decoration: underline;
+	}
+    .signup-form .hint-text {
+		padding-bottom: 15px;
+		text-align: center;
+    }
+</style>
+</style>{% if form.errors %}
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
     <strong>Holy guacamole!<br></strong> 
     {{ form.errors.as_text }}
@@ -12,12 +94,34 @@
     </button>
   </div>
 {% endif %}
-  <div style="height: 100vh; width: 100%"class="background container-fluid px-5">
-    <form class="signup-form" method="POST" action="{% url 'users:signup' %}">
-      <div id="signup-text">Sign Me Up!</div>
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit" class="btn btn-danger">Sign Up</button>
+<div class="signup-form">
+    <form action="/examples/actions/confirmation.php" method="post">
+		<h2>Sign Up</h2>
+		<p>Please fill in this form to create an account!</p>
+		<hr>
+      <div class="form-group">
+        <div class="row">
+          <div class="col-6">{{ form.first_name }}</div>
+          <div class="col-6">{{ form.last_name }}</div>
+        </div>        	
+        </div>
+        <div class="form-group">
+            {{ form.email }}
+        </div>
+        <div class="form-group">
+            Contractor: {{ form.contractor }}
+        </div>
+      <div class="form-group">
+        <div class="row">
+            <div class="col-6">{{ form.password1 }}</div>
+            <div class="col-6">{{ form.password2 }}</div>
+        </div>
+        
+      </div> 
+		<div class="form-group">
+            <button type="submit" class="btn btn-danger btn-lg">Sign Up</button>
+        </div>
     </form>
-  </div>
+	<div class="hint-text">Already have an account? <a href="{% url 'login' %}">Login here</a></div>
+</div>
 {% endblock %}
