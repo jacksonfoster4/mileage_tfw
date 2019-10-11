@@ -48,7 +48,8 @@ def test_send_spreadsheets():
         celery -A mileage_logger worker -l INFO
     from command line...
     from celery import Celery
+    celery = Celery()
     celery.config_from_object('django.conf:settings')
-    celery.send_task('test_send_spreadsheets')
+    celery.send_task('send_spreadsheets')
 
 """

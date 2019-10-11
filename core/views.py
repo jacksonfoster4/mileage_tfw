@@ -7,10 +7,10 @@ from core.utils import Spreadsheet
 from datetime import timedelta
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.cache import never_cache
+from django.views.decorators.cache import cache_control
 from decimal import Decimal
 
-@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @login_required
 def index(request):
     messages = []
@@ -33,11 +33,10 @@ def index(request):
                                                 'total_reimbursement': sum(map(lambda x: x.amount_reimbursed(), all_entries)),
                                                 'total_miles_driven': sum(map(lambda x: x.miles_driven(), all_entries)),
                                                 'start_of_this_pay_period': Entry().get_start_of_pay_period_date().strftime("%b %d %Y"),
-                                                'end_of_this_pay_period': Entry().get_end_of_pay_period_date().strftime("%b %d %Y"),
-                                                'messages': messages
+                                                'end_of_this_pay_period': Entry().get_end_of_pay_period_date().strftime("%b %d %Y")
                                                 })
 
-@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @login_required
 def list_entries(request):
     entries = list(Entry.objects.filter(user=request.user, draft=False))
@@ -60,6 +59,7 @@ def list_entries(request):
     return render(request, 'core/list.html', {'pay_periods': pay_periods})
     
 
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @login_required
 def new(request):
     if request.method == 'POST':
@@ -73,13 +73,13 @@ def new(request):
         form = EntryForm()
         return render(request, 'core/new.html', {'form': form})
 
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @login_required
 def detail(request, id):
     entry = Entry.objects.get(id=id)
     return render(request, 'core/detail.html', {'entry': entry})
  
-
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @login_required
 def edit(request, id):
     entry = Entry.objects.get(id=id)
@@ -108,7 +108,7 @@ def delete(request, id):
     Entry.objects.filter(id=id).delete()
     return redirect('core:index')
 
-@never_cache
+@cache_control(max_age=0, no_cache=True, no_store=True, must_revalidate=True)
 @login_required
 def view_sheet(request, id):
     entry = Entry.objects.get(id=id)
@@ -117,6 +117,5 @@ def view_sheet(request, id):
     keys = []
     for key in sheet['entries'][0].keys():
             keys.append(key.title().replace("_", " "))
-    print(sheet)
     return render(request, 'core/sheet.html', {'keys': keys,'sheet': sheet, 'pay_period_start': entry.pay_period_start, 'pay_period_end': entry.pay_period_end})
     
