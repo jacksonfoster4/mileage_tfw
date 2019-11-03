@@ -18,7 +18,10 @@ app.config_from_object('django.conf:settings')
 app.conf.timezone = 'US/Pacific'
 
 app.conf.beat_schedule = {
-    # Executes every Friday at 00:00
+    # Executes every Thursday at 6:30
+
+    # there is a separate cronjob that runs every thursday at midnight.
+    # this is to purge caches. if you change this schedule, be sure to change the cronjob.
     'send-sheets-every-thursday-afternoon': {
         'task': 'send_spreadsheets',
         'schedule': crontab(hour=18, minute=30, day_of_week=4),
