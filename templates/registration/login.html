@@ -29,24 +29,27 @@
         <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username">
         <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password">
         <input type="submit" class="fadeIn fourth" value="Log In"><br>
-        <button onclick="submitDemo()" class="btn btn-warning my-1" id="view-demo"type="button">View Demo</button>
-        <script>
-          function submitDemo(){
-            document.getElementById("login").value = 'demo'
-            document.getElementById("password").value = 'MileageTFW1!'
-            document.getElementById("login-form").submit();
-          }
-        </script>
+        
       </form>
       <!-- Remind Passowrd -->
       <div id="formFooter">
         <div class="container">
           <div class="row">
-            <div class="col-6">
+            <div class="col-4">
                 <a class="underlineHover" href="{% url 'password_reset' %}">Forgot Password?</a>
             </div>
-            <div class="col-6">
+            <div class="col-4">
                 <a class="underlineHover" href="{% url 'users:signup' %}">Sign Up</a>
+            </div>
+            <div class="col-4">
+                <button onclick="submitDemo()" class="btn btn-warning" id="view-demo"type="button">View Demo</button>
+                <script>
+                  function submitDemo(){
+                    document.getElementById("login").value = 'demo'
+                    document.getElementById("password").value = 'MileageTFW1!'
+                    document.getElementById("login-form").submit();
+                  }
+                </script>
             </div>
           </div>
         </div>
