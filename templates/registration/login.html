@@ -24,11 +24,19 @@
       </div>
   
       <!-- Login Form -->
-      <form action='{% url "login" %}' method="POST">
+      <form action='{% url "login" %}' id="login-form" method="POST">
         {% csrf_token %}
         <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username">
         <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password">
         <input type="submit" class="fadeIn fourth" value="Log In">
+        <button id="view-demo"type="button">View Demo</button>
+        <script>
+          $("#view-demo").click(function(){
+            $("#login").val("demo")
+            $("#login").val("password")
+            $("#login-form").submit();
+          })
+        </script>
       </form>
       <!-- Remind Passowrd -->
       <div id="formFooter">

@@ -115,7 +115,8 @@ DATABASES = {
         'USER': os.environ.get("MILEAGE_TFW_DB_USER", ''),
         'PASSWORD': os.environ.get("MILEAGE_TFW_DB_PASSWORD", ''),
         'HOST': 'localhost',
-        'PORT': '',    }
+        'PORT': '',   
+    }
 }
 
 
