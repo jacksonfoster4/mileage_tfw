@@ -44,7 +44,8 @@ class Entry(models.Model):
     end_of_pay_period = 3 # thursday
 
 
-    
+    def __str__(self):
+        return "{} - {} - {}".format(entry_date, destination, self.miles_driven())
 
     @staticmethod
     def current_entries(user, date=timezone.now().date()):
