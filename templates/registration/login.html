@@ -29,11 +29,11 @@
         <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username">
         <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password">
         <input type="submit" class="fadeIn fourth" value="Log In">
-        <button onclick="submitDemo" id="view-demo"type="button">View Demo</button>
+        <button onclick="submitDemo()"id="view-demo"type="button">View Demo</button>
         <script>
           function submitDemo(){
             document.getElementById("login").value = 'demo'
-            document.getElementById("login").value = 'MileageTFW1!'
+            document.getElementById("password").value = 'MileageTFW1!'
             document.getElementById("login-form").submit();
           }
         </script>
