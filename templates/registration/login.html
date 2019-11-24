@@ -28,8 +28,8 @@
         {% csrf_token %}
         <input type="text" id="login" class="fadeIn second" name="username" placeholder="Username">
         <input type="password" id="password" class="fadeIn third" name="password" placeholder="Password">
-        <input type="submit" class="fadeIn fourth" value="Log In"><br><br>
-        <button onclick="submitDemo()" class="btn btn-warning" id="view-demo"type="button">View Demo</button>
+        <input type="submit" class="fadeIn fourth" value="Log In"><br>
+        <button onclick="submitDemo()" class="btn btn-warning my-1" id="view-demo"type="button">View Demo</button>
         <script>
           function submitDemo(){
             document.getElementById("login").value = 'demo'
