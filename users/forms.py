@@ -52,7 +52,7 @@ class CustomUserChangeForm(forms.ModelForm):
             )
         return cleaned_data
 
-    def save(self, request, commit=True):
+    def save(self, commit=True):
         obj = super().save(commit=False)
         if self.cleaned_data['password'] != None:
             obj.set_password(self.cleaned_data['password'])
