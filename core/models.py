@@ -45,7 +45,7 @@ class Entry(models.Model):
 
 
     def __str__(self):
-        return "{} - {} - {}".format(entry_date, destination, self.miles_driven())
+        return "{} - {} - {}".format(self.entry_date, self.destination, self.miles_driven())
 
     @staticmethod
     def current_entries(user, date=timezone.now().date()):
